@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DFC1C1"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#DFC1C1">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:background="@drawable/topbar"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <ImageView
+                android:id="@+id/back_icon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/panahkiri" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:textColor="@android:color/white"
+                android:textSize="30sp"
+                android:layout_marginRight="120dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Judul -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Silahkan isi dengan data yang valid"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Nomor Handphone -->
+        <EditText
+            android:id="@+id/input_phone"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Nomor Handphone"
+            android:inputType="phone"
+            android:paddingStart="12dp" />
+
+        <!-- Nama Awal & Akhir -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <EditText
+                android:id="@+id/input_first_name"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:background="@android:drawable/edit_text"
+                android:hint="Nama Awal"
+                android:paddingStart="12dp" />
+
+            <EditText
+                android:id="@+id/input_last_name"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@android:drawable/edit_text"
+                android:hint="Nama Akhir"
+                android:paddingStart="12dp" />
+        </LinearLayout>
+
+        <!-- Email -->
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:paddingStart="12dp" />
+
+        <!-- Password -->
+        <EditText
+            android:id="@+id/input_pass"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingStart="12dp" />
+
+        <!-- Alamat -->
+        <EditText
+            android:id="@+id/input_alamat"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Alamat Rumah"
+            android:paddingStart="12dp" />
+
+        <!-- Tanggal Lahir -->
+        <EditText
+            android:id="@+id/input_ttl"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@android:drawable/edit_text"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Tanggal Lahir"
+            android:paddingStart="12dp" />
+
+        <!-- Checkbox -->
+        <CheckBox
+            android:id="@+id/checkbox_agree"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Saya menyetujui ReWear Terms of Service, Payments Terms of Service."
+            android:textColor="#000000" />
+
+        <!-- Tombol Register -->
+        <Button
+            android:id="@+id/register_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="20dp"
+            android:text="Daftar"
+            android:textStyle="bold"
+            android:backgroundTint="#B09494"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</ScrollView>

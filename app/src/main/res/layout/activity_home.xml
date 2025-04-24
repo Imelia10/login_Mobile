@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fitsSystemWindows="true">
+
+    <!-- Sticky Header -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="0dp">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/hi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="Hi, Alena"
+                    android:textColor="#333333"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/chat"
+                    android:layout_width="33dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/chat" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="4dp"
+                android:text="Selamat Datang di ReWear!"
+                android:textColor="#666666"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/mainScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="120dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- CARD Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Card 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="185dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_card"
+                    android:elevation="4dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upload Barang"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/ic_menjual" />
+                </LinearLayout>
+
+                <!-- Card 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="185dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_card"
+                    android:elevation="4dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pusat Transaksi"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/ic_menyewa" />
+                </LinearLayout>
+
+                <!-- Card 3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="185dp"
+                    android:background="@drawable/bg_card"
+                    android:elevation="4dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edukasi"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/book" />
+                </LinearLayout>
+
+                <!-- Card 4 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="185dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_card"
+                    android:elevation="4dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Daftar Pengajuan Tukar Tambah"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/ic_tukar_t" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating ImageView di tengah -->
+    <ImageView
+        android:id="@+id/bg_bottom_sc"
+        android:layout_width="72dp"
+        android:layout_height="70dp"
+        android:src="@drawable/logo"
+        android:background="@drawable/bg_bottom_sc"
+        android:elevation="8dp"
+        android:clickable="true"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="25dp" />
+
+    <!-- Ikon navigasi tambahan -->
+    <ImageView
+        android:layout_width="44dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="90dp"
+        android:layout_marginBottom="5dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/uang1" />
+
+    <ImageView
+        android:id="@+id/profil1"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="11dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/profil1" />
+
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="270dp"
+        android:layout_marginBottom="11dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/history" />
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="340dp"
+        android:layout_marginBottom="11dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/vchr" />
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bottom"
+        app:labelVisibilityMode="labeled" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

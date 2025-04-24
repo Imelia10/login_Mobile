@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#B09494"/>  <!-- Warna Background -->
+
+    <corners android:topLeftRadius="20dp"
+        android:topRightRadius="20dp"/>  <!-- Membuat lengkungan di atas -->
+
+    <padding android:bottom="8dp"/>  <!-- Jarak ke bawah -->
+
+    <shadowColor android:color="#80000000"/>  <!-- Efek bayangan -->
+</shape>

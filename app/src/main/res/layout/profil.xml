@@ -1,0 +1,110 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fitsSystemWindows="true">
+
+
+
+    <!-- Sticky Header -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="17dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/back_home1" />
+
+
+    <ImageView
+        android:id="@+id/chat_icon"
+        android:layout_width="120dp"
+        android:layout_marginTop="130dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="138dp"
+        android:src="@drawable/foto" />
+
+    <!-- Scrollable Content -->
+
+    <!-- Floating Action Button (FAB) di tengah bawah -->
+
+    <ImageView
+        android:id="@+id/fab_custom"
+        android:layout_width="72dp"
+        android:layout_height="70dp"
+        android:src="@drawable/logo"
+        android:layout_marginRight="30dp"
+        android:elevation="8dp"
+        android:clickable="true"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="2dp" />
+
+
+    <!-- Ikon navigasi tambahan di sebelah kanan -->
+    <ImageView
+        android:layout_width="44dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="115dp"
+        android:layout_marginBottom="5dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/uang1" />
+
+    <ImageView
+        android:id="@+id/fab_custom1"
+        android:layout_width="72dp"
+        android:layout_height="70dp"
+        android:src="@drawable/profil1"
+        android:background="@drawable/bg_bottom_sc"
+        android:elevation="8dp"
+        android:clickable="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="25dp" />
+
+
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="270dp"
+        android:layout_marginBottom="11dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/history" />
+
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="340dp"
+        android:layout_marginBottom="11dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/vchr" />
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bottom"
+        app:labelVisibilityMode="labeled"
+        app:layout_anchor="@+id/fab_custom"
+        app:layout_anchorGravity="center" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

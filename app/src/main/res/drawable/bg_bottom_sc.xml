@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Lingkaran luar -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#B09494"/> <!-- Warna luar -->
+            <size android:width="60dp" android:height="60dp"/> <!-- Ukuran lingkaran luar sangat kecil -->
+        </shape>
+    </item>
+
+    <!-- FAB di dalamnya -->
+    <item android:top="5dp" android:bottom="5dp" android:left="5dp" android:right="5dp"> <!-- Margin untuk lingkaran dalam -->
+        <shape android:shape="oval">
+            <solid android:color="@color/white"/> <!-- Warna FAB -->
+            <size android:width="4dp" android:height="15dp"/> <!-- Ukuran lingkaran dalam sangat kecil -->
+        </shape>
+    </item>
+
+</layer-list>

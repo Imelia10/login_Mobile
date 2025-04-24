@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DFC1C1"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:background="@drawable/topbar"
+            android:gravity="center_vertical|center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log In"
+                android:textColor="@android:color/white"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Logo -->
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="70dp"
+            android:src="@drawable/hpfigma" />
+
+        <!-- Judul -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Masuk Untuk Menikmati Fitur"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="20dp" />
+
+        <!-- Input Email -->
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="E-MAIL"
+            android:paddingStart="12dp"
+            android:inputType="textEmailAddress" />
+
+        <!-- Input Password -->
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="PASSWORD"
+            android:paddingStart="12dp"
+            android:inputType="textPassword" />
+
+        <!-- Button Login -->
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="20dp"
+            android:text="Masuk"
+            android:textStyle="bold"
+            android:backgroundTint="#B09494"
+            android:textColor="@android:color/white"
+            android:stateListAnimator="@null" />
+
+        <!-- Register -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Belum mempunyai akun?"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/daftar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Daftar di sini"
+                android:textColor="#007BFF"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
