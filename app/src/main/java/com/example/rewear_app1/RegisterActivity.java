@@ -1,25 +1,36 @@
 package com.example.rewear_app1;
+import android.content.Intent;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.Calendar;
 
 public class RegisterActivity extends AppCompatActivity {
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int REQUEST_PERMISSION_CODE = 100;
 
     EditText phone, firstName, lastName, email, password, alamat, ttl;
     Button btnRegister;
     CheckBox agreeCheckbox;
-    ImageView backIcon;
+    ImageView backIcon, profileImage;
     DatabaseHelper dbHelper;
+
+    Uri selectedImageUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +47,20 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.register_button);
         agreeCheckbox = findViewById(R.id.checkbox_agree);
         backIcon = findViewById(R.id.back_icon);
+        profileImage = findViewById(R.id.image_profile);
 
         dbHelper = new DatabaseHelper(this);
 
-        // Tanggal Lahir dengan DatePicker
+        // Periksa izin penyimpanan
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
+        }
+
+        profileImage.setOnClickListener(v -> openGallery());
         ttl.setOnClickListener(v -> showDatePicker());
 
-        // Tombol Daftar
         btnRegister.setOnClickListener(view -> {
             String phoneInput = phone.getText().toString().trim();
             String firstNameInput = firstName.getText().toString().trim();
@@ -73,17 +91,36 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            boolean isRegistered = dbHelper.registerUser(phoneInput, firstNameInput, lastNameInput, emailInput, passwordInput, alamatInput, ttlInput);
+            String photoUriString = selectedImageUri != null ? selectedImageUri.toString() : "";
+
+            boolean isRegistered = dbHelper.registerUser(phoneInput, firstNameInput, lastNameInput,
+                    emailInput, passwordInput, alamatInput, ttlInput, photoUriString);
+
             if (isRegistered) {
                 Toast.makeText(this, "Registrasi Berhasil", Toast.LENGTH_SHORT).show();
-                finish(); // Kembali ke LoginActivity
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             } else {
-                Toast.makeText(this, "Registrasi Gagal", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Registrasi gagal!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Tombol Panah Kembali ke Login
         backIcon.setOnClickListener(v -> finish());
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+            profileImage.setImageURI(selectedImageUri); // Set image ke ImageView
+        }
     }
 
     private void showDatePicker() {
@@ -96,5 +133,16 @@ public class RegisterActivity extends AppCompatActivity {
             String date = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
             ttl.setText(date);
         }, year, month, day).show();
+    }
+
+    // Menghandle hasil permintaan izin
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Izin diperlukan untuk memilih foto", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.rewear_app1">
 
-    <!-- Izin yang dibutuhkan, jika diperlukan -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
 
     <application
         android:allowBackup="true"
@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.ReWear_app1">
 
-        <!-- MainActivity sebagai aktivitas utama yang akan diluncurkan pertama kali -->
+        <!-- Activity Login sebagai launcher -->
         <activity android:name=".LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.ReWear_app1"
@@ -24,13 +24,15 @@
 
         <!-- Activity Register -->
         <activity android:name=".RegisterActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
 
         <!-- Activity Home -->
         <activity android:name=".HomeActivity"
             android:exported="true" />
 
+        <!-- Activity Profile -->
+        <activity android:name=".ProfilActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

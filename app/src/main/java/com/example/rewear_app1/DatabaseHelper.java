@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ReWear.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3; // Naikkan versi untuk perubahan
     private static final String TABLE_NAME = "users";
     private static final String COLUMN_PHONE = "phone";
     private static final String COLUMN_FIRST_NAME = "first_name";
@@ -18,6 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PASSWORD = "password";
     private static final String COLUMN_ALAMAT = "alamat";
     private static final String COLUMN_TTL = "ttl";
+    private static final String COLUMN_PHOTO_URI = "photoUri"; // Kolom baru
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,18 +33,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_EMAIL + " TEXT, " +
                 COLUMN_PASSWORD + " TEXT, " +
                 COLUMN_ALAMAT + " TEXT, " +
-                COLUMN_TTL + " TEXT)";
+                COLUMN_TTL + " TEXT, " +
+                COLUMN_PHOTO_URI + " TEXT)";  // Menambahkan kolom photoUri
         db.execSQL(createTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(db);
+        if (oldVersion < 2) {
+            // Tambahkan kolom photoUri jika versi database lebih rendah dari 2
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_PHOTO_URI + " TEXT");
+        }
     }
 
-    // Fungsi untuk menyimpan data pengguna (register)
-    public boolean registerUser(String phone, String firstName, String lastName, String email, String password, String alamat, String ttl) {
+    public boolean registerUser(String phone, String firstName, String lastName, String email, String password, String alamat, String ttl, String photoUri) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_PHONE, phone);
@@ -53,13 +56,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_PASSWORD, password);
         contentValues.put(COLUMN_ALAMAT, alamat);
         contentValues.put(COLUMN_TTL, ttl);
+        contentValues.put(COLUMN_PHOTO_URI, photoUri);  // Menyimpan URI foto profil
 
         long result = db.insert(TABLE_NAME, null, contentValues);
         db.close();
         return result != -1;
     }
 
-    // Fungsi untuk mengecek apakah email sudah terdaftar
     public boolean isEmailExists(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, null, COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
@@ -68,23 +71,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    // Fungsi untuk mengambil data pengguna berdasarkan email dan password
-    public User getUserByEmailAndPassword(String email, String password) {
+    public User getUserByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_NAME, null, COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
-                new String[]{email, password}, null, null, null);
+        Cursor cursor = db.query(TABLE_NAME, null, COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            String firstName = cursor.getString(cursor.getColumnIndex(COLUMN_FIRST_NAME));
-            String lastName = cursor.getString(cursor.getColumnIndex(COLUMN_LAST_NAME));
-            String phone = cursor.getString(cursor.getColumnIndex(COLUMN_PHONE));
-            String alamat = cursor.getString(cursor.getColumnIndex(COLUMN_ALAMAT));
-            String ttl = cursor.getString(cursor.getColumnIndex(COLUMN_TTL));
-            cursor.close();
+            String firstName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME));
+            String lastName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME));
+            String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE));
+            String emailDb = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
+            String passwordDb = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
+            String alamat = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT));
+            String ttl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TTL));
+            String photoUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHOTO_URI));
 
-            return new User(firstName, lastName, phone, email, password, alamat, ttl);
-        } else {
-            return null;
+            cursor.close();
+            return new User(firstName, lastName, phone, emailDb, passwordDb, alamat, ttl, photoUri);
         }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        return null;
+    }
+
+    public User getUserByEmailAndPassword(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE email = ? AND password = ?", new String[]{email, password});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
+            String lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
+            String phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"));
+            String emailDb = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+            String passwordDb = cursor.getString(cursor.getColumnIndexOrThrow("password"));
+            String alamat = cursor.getString(cursor.getColumnIndexOrThrow("alamat"));
+            String ttl = cursor.getString(cursor.getColumnIndexOrThrow("ttl"));
+            String photoUri = cursor.getString(cursor.getColumnIndexOrThrow("photoUri"));
+
+            cursor.close();
+            return new User(firstName, lastName, phone, emailDb, passwordDb, alamat, ttl, photoUri);
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        return null;
     }
 }

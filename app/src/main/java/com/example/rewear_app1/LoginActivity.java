@@ -43,12 +43,13 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            User user = dbHelper.getUserByEmailAndPassword(emailInput, passwordInput);
+            User user = dbHelper.getUserByEmail(emailInput);
             if (user != null) {
-                // Simpan nama pengguna di SharedPreferences
+                // Simpan nama pengguna dan email di SharedPreferences
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("firstName", user.getFirstName());
+                editor.putString("firstName", user.getFirstName());  // Gunakan getFirstName()
+                editor.putString("email", user.getEmail());  // Gunakan getEmail()
                 editor.apply();
 
                 // Tampilkan pesan berhasil login
