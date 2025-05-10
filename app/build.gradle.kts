@@ -25,6 +25,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -32,12 +33,15 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation("androidx.legacy:legacy-support-v4:1.0.0") // Jika kamu membutuhkan pustaka legacy
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Jika kamu menggunakan ViewPager2 atau pustaka yang lebih baru, kamu bisa menambahkan:
+    // implementation("androidx.viewpager2:viewpager2:1.0.0")
 }

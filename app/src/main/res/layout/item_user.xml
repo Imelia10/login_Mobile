@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <!-- Table Layout -->
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:background="#FBDCDC">
+
+        <!-- Header Row -->
+        <TableRow android:background="#FBDCDC">
+            <TextView android:text="ID" style="@style/TableHeaderStyle"/>
+            <TextView android:text="Nama Awal" style="@style/TableHeaderStyle"/>
+            <TextView android:text="Nama Akhir" style="@style/TableHeaderStyle"/>
+            <TextView android:text="No Telp" style="@style/TableHeaderStyle"/>
+            <TextView android:text="Email" style="@style/TableHeaderStyle"/>
+            <TextView android:text="Password" style="@style/TableHeaderStyle"/>
+            <TextView android:text="Alamat Rumah" style="@style/TableHeaderStyle"/>
+            <TextView android:text="Tanggal Lahir" style="@style/TableHeaderStyle"/>
+            <TextView android:text="Foto" style="@style/TableHeaderStyle"/>
+        </TableRow>
+
+        <!-- Example Row with User Data -->
+        <TableRow>
+            <TextView android:text="1" style="@style/TableCellStyle"/>
+            <TextView android:text="John" style="@style/TableCellStyle"/>
+            <TextView android:text="Doe" style="@style/TableCellStyle"/>
+            <TextView android:text="08123456789" style="@style/TableCellStyle"/>
+            <TextView android:text="john@example.com" style="@style/TableCellStyle"/>
+            <TextView android:text="******" style="@style/TableCellStyle"/>
+            <TextView android:text="Jl. Mawar No. 5" style="@style/TableCellStyle"/>
+            <TextView android:text="01-01-1990" style="@style/TableCellStyle"/>
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/profil1"
+                android:layout_gravity="center"
+                android:padding="4dp"/>
+        </TableRow>
+
+    </TableLayout>
+</LinearLayout>

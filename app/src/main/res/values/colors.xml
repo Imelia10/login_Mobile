@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_gray">#D3D3D3</color>
+
+    <color name="kategori_normal">#DFC1C1</color>
+    <color name="kategori_selected">#C38989</color>
+
+
 </resources>

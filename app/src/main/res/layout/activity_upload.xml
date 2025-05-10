@@ -1,0 +1,123 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/topbar"
+        android:layout_width="445dp"
+        android:layout_height="132dp"
+        android:background="@drawable/topbar"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/back_icon"
+            android:layout_width="42dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/panahkiri" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="100dp"
+            android:text="Upload Barang"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="429dp"
+        android:layout_height="735dp"
+        android:background="@drawable/rectangle_putih"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topbar"
+        app:layout_constraintVertical_bias="0.392">
+
+        <!-- Ganti EditText Kategori menjadi Dropdown -->
+        <AutoCompleteTextView
+            android:id="@+id/input_kategori"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@android:drawable/edit_text"
+            android:clickable="true"
+            android:focusable="true"
+            android:hint="Kategori"
+            android:inputType="none"
+            android:paddingStart="12dp" />
+
+        <EditText
+            android:id="@+id/input_namabarang"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Nama Barang"
+            android:paddingStart="12dp" />
+
+        <EditText
+            android:id="@+id/input_keterangan"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Keterangan"
+            android:paddingStart="12dp" />
+
+        <EditText
+            android:id="@+id/input_harga"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Penawaran Harga"
+            android:paddingStart="12dp" />
+
+        <EditText
+            android:id="@+id/input_upgambar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:drawable/edit_text"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Upload Gambar (Max 5 Gambar)"
+            android:paddingStart="12dp"
+            android:cursorVisible="false"
+            android:inputType="none" />
+
+        <ImageView
+            android:id="@+id/upload_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="220dp"
+            android:layout_gravity="center"
+            android:contentDescription="Upload Gambar"
+            android:src="@drawable/upload_button" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -110,6 +110,7 @@
 
                 <!-- Card 2 -->
                 <LinearLayout
+                    android:id="@+id/cardPusatTransaksi"
                     android:layout_width="match_parent"
                     android:layout_height="185dp"
                     android:layout_marginBottom="16dp"
@@ -133,8 +134,10 @@
                         android:src="@drawable/ic_menyewa" />
                 </LinearLayout>
 
+
                 <!-- Card 3 -->
                 <LinearLayout
+                    android:id="@+id/cardEdukasi"
                     android:layout_width="match_parent"
                     android:layout_height="185dp"
                     android:background="@drawable/bg_card"

@@ -1,6 +1,8 @@
 package com.example.rewear_app1;
 
+import android.widget.LinearLayout;
 import android.content.Intent;
+import android.view.View;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -25,6 +27,14 @@ public class HomeActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
+
+        LinearLayout cardEdukasi = findViewById(R.id.cardEdukasi);
+        cardEdukasi.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, EdukasiUserActivity.class);
+            startActivity(intent);
+        });
+
+
         // Ambil email dari SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
@@ -36,8 +46,15 @@ public class HomeActivity extends AppCompatActivity {
                 // Tampilkan nama di TextView
                 hiTextView.setText("Hi, " + user.getFirstName());
 
-                // TIDAK PERLU ubah foto profil di sini.
-                // Biar gambar profil tetap icon default yang ada di layout.
+
+                LinearLayout cardPusatTransaksi = findViewById(R.id.cardPusatTransaksi);
+                cardPusatTransaksi.setOnClickListener(v -> {
+                    Intent intent = new Intent(HomeActivity.this, TransaksiActivity.class);
+                    startActivity(intent);
+                });
+
+
+
 
                 // Klik icon profil --> masuk ke ProfilActivity
                 profilImageView.setOnClickListener(view -> {

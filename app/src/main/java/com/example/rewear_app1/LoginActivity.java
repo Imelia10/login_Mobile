@@ -43,13 +43,23 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
+            // Tambahan: Cek apakah login sebagai admin
+            if (emailInput.equals("admin@gmail.com") && passwordInput.equals("123")) {
+                Toast.makeText(this, "Login Admin Berhasil", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                startActivity(intent);
+                finish(); // Menutup LoginActivity
+                return;
+            }
+
+            // Login biasa (user biasa)
             User user = dbHelper.getUserByEmail(emailInput);
             if (user != null) {
                 // Simpan nama pengguna dan email di SharedPreferences
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("firstName", user.getFirstName());  // Gunakan getFirstName()
-                editor.putString("email", user.getEmail());  // Gunakan getEmail()
+                editor.putString("firstName", user.getFirstName()); // Gunakan getFirstName()
+                editor.putString("email", user.getEmail()); // Gunakan getEmail()
                 editor.apply();
 
                 // Tampilkan pesan berhasil login
@@ -58,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Arahkan ke HomeActivity setelah login berhasil
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
-                finish();  // Menutup LoginActivity agar tidak bisa kembali ke halaman login
+                finish(); // Menutup LoginActivity agar tidak bisa kembali ke halaman login
             } else {
                 // Jika email atau password salah
                 Toast.makeText(this, "Email atau Password salah!", Toast.LENGTH_SHORT).show();

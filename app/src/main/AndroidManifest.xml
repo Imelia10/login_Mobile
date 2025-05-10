@@ -1,15 +1,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.rewear_app1">
 
+    <!-- Izin untuk akses internet dan penyimpanan -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.ReWear_app1">
+
+        <!-- Provider untuk akses file -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <!-- Activity Login sebagai launcher -->
         <activity android:name=".LoginActivity"
@@ -22,17 +35,19 @@
             </intent-filter>
         </activity>
 
-        <!-- Activity Register -->
-        <activity android:name=".RegisterActivity"
-            android:exported="false" />
+        <!-- Activity lainnya -->
+        <activity android:name=".RegisterActivity" android:exported="false" />
+        <activity android:name=".HomeActivity" android:exported="true" />
+        <activity android:name=".ProfilActivity" android:exported="false" />
+        <activity android:name=".AdminActivity" />
+        <activity android:name=".AdminUserActivity" />
+        <activity android:name=".AddUserActivity" />
+        <activity android:name=".EditUserActivity" />
+        <activity android:name=".KelolaEdukasiActivity" />
+        <activity android:name=".EdukasiUserActivity" />
+        <activity android:name=".TransaksiActivity" />
+        <activity android:name=".TambahProdukActivity" />
 
-        <!-- Activity Home -->
-        <activity android:name=".HomeActivity"
-            android:exported="true" />
-
-        <!-- Activity Profile -->
-        <activity android:name=".ProfilActivity"
-            android:exported="false" />
     </application>
 
 </manifest>
