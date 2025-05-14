@@ -63,10 +63,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-
     public boolean registerUser(String phone, String firstName, String lastName, String email, String password, String alamat, String ttl, String photoUri) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int newId = getNextAvailableId(db); // pass db yang sama
+        int newId = getNextAvailableId(db);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_ID, newId);
@@ -84,10 +83,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-
     public boolean addUser(String firstName, String lastName, String phone, String email, String password, String alamat, String ttl, String photoUri) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int newId = getNextAvailableId(db); // pass db yang sudah dibuka
+        int newId = getNextAvailableId(db);
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, newId);
@@ -104,7 +102,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return result != -1;
     }
-
 
     public boolean updateUser(int userId, String firstName, String lastName, String phone, String ttl, String photoUri) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -176,14 +173,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String firstName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME));
             String lastName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME));
             String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE));
-            String emailDb = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
-            String passwordDb = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
+            String password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
             String alamat = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT));
             String ttl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TTL));
             String photoUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHOTO_URI));
 
             cursor.close();
-            return new User(id, firstName, lastName, phone, emailDb, passwordDb, alamat, ttl, photoUri);
+            return new User(id, firstName, lastName, phone, email, password, alamat, ttl, photoUri);
         }
 
         if (cursor != null) cursor.close();
@@ -199,14 +195,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String firstName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME));
             String lastName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME));
             String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE));
-            String emailDb = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
-            String passwordDb = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
             String alamat = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT));
             String ttl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TTL));
             String photoUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHOTO_URI));
 
             cursor.close();
-            return new User(id, firstName, lastName, phone, emailDb, passwordDb, alamat, ttl, photoUri);
+            return new User(id, firstName, lastName, phone, email, password, alamat, ttl, photoUri);
         }
 
         if (cursor != null) cursor.close();
@@ -234,7 +228,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
             cursor.close();
         }
+
         db.close();
         return userList;
     }
+
+
 }

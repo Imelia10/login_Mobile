@@ -47,6 +47,9 @@
         <activity android:name=".EdukasiUserActivity" />
         <activity android:name=".TransaksiActivity" />
         <activity android:name=".TambahProdukActivity" />
+        <activity android:name=".DetailProdukActivity" />
+        <activity android:name=".CardUploadBarangActivity" />
+
 
     </application>
 

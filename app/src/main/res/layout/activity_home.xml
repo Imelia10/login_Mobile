@@ -85,6 +85,7 @@
 
                 <!-- Card 1 -->
                 <LinearLayout
+                    android:id="@+id/cardUploadBarang"
                     android:layout_width="match_parent"
                     android:layout_height="185dp"
                     android:layout_marginBottom="16dp"

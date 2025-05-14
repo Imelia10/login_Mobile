@@ -1,17 +1,17 @@
 package com.example.rewear_app1;
 
 public class User {
-    private int id;  // Menyimpan ID pengguna
+    private int id;
     private String firstName;
     private String lastName;
     private String phone;
     private String email;
     private String password;
     private String alamat;
-    private String ttl; // Tanggal lahir
-    private String photoUri; // Foto profil
+    private String ttl;
+    private String photoUri;
 
-    // Constructor tanpa ID, untuk keperluan registrasi
+    // Constructor tanpa ID
     public User(String firstName, String lastName, String phone, String email, String password, String alamat, String ttl, String photoUri) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -23,7 +23,7 @@ public class User {
         this.photoUri = photoUri;
     }
 
-    // Constructor dengan ID, untuk keperluan pengambilan data dari database
+    // Constructor dengan ID
     public User(int id, String firstName, String lastName, String phone, String email, String password, String alamat, String ttl, String photoUri) {
         this.id = id;
         this.firstName = firstName;
@@ -36,7 +36,7 @@ public class User {
         this.photoUri = photoUri;
     }
 
-    // Getter dan Setter untuk ID
+    // Getter dan Setter
     public int getId() {
         return id;
     }
@@ -45,7 +45,6 @@ public class User {
         this.id = id;
     }
 
-    // Getter dan Setter untuk properti lainnya
     public String getFirstName() {
         return firstName;
     }

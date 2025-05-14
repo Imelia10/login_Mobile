@@ -1,61 +1,67 @@
 package com.example.rewear_app1;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.graphics.Color;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.VideoView;
-import android.widget.ImageButton;
-import android.graphics.Typeface;
-import android.widget.ImageView;
+import android.content.Intent;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
+import android.widget.VideoView;
+import android.widget.ImageView;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 import java.util.List;
 import java.util.Map;
 
 public class EdukasiUserActivity extends AppCompatActivity {
 
+    private static final String TAG = "EdukasiUserActivity";
     private Button btnArtikel, btnVideo;
     private LinearLayout layoutArtikel;
     private GridLayout layoutVideo;
     private boolean isArtikelActive = true;
-    private String selectedVideoUri = "";
     private DatabaseHelperEdukasi dbHelper;
-    private ActivityResultLauncher<Intent> videoPickerLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_kelola_edukasi);
+        setContentView(R.layout.activity_edukasi_user);
 
+        // Initialize views
         btnArtikel = findViewById(R.id.btnArtikel);
         btnVideo = findViewById(R.id.btnVideo);
         layoutArtikel = findViewById(R.id.layoutArtikel);
         layoutVideo = findViewById(R.id.layoutVideo);
 
+        // Set initial visibility - show only articles at start
+        layoutArtikel.setVisibility(View.VISIBLE);
+        layoutVideo.setVisibility(View.GONE);
+        isArtikelActive = true;
+
         dbHelper = new DatabaseHelperEdukasi(this);
 
+        // Button click listeners
         btnArtikel.setOnClickListener(v -> {
             layoutArtikel.setVisibility(View.VISIBLE);
             layoutVideo.setVisibility(View.GONE);
             isArtikelActive = true;
         });
+
+        ImageView backIcon = findViewById(R.id.back);
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EdukasiUserActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
         btnVideo.setOnClickListener(v -> {
             layoutArtikel.setVisibility(View.GONE);
@@ -66,7 +72,44 @@ public class EdukasiUserActivity extends AppCompatActivity {
         loadData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopAllVideos();
+    }
+
+    private void stopAllVideos() {
+        for (int i = 0; i < layoutVideo.getChildCount(); i++) {
+            View child = layoutVideo.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                VideoView videoView = findVideoViewInLayout((LinearLayout) child);
+                if (videoView != null && videoView.isPlaying()) {
+                    videoView.stopPlayback();
+                }
+            }
+        }
+    }
+
+    private VideoView findVideoViewInLayout(LinearLayout layout) {
+        for (int i = 0; i < layout.getChildCount(); i++) {
+            View child = layout.getChildAt(i);
+            if (child instanceof VideoView) {
+                return (VideoView) child;
+            }
+        }
+        return null;
+    }
+
     private void loadData() {
+        layoutArtikel.removeAllViews();
+        layoutVideo.removeAllViews();
+
         List<Map<String, String>> data = dbHelper.getAllEdukasi();
         for (Map<String, String> item : data) {
             String judul = item.get(DatabaseHelperEdukasi.COL_JUDUL);
@@ -93,7 +136,7 @@ public class EdukasiUserActivity extends AppCompatActivity {
         TextView tvJudul = new TextView(this);
         tvJudul.setText(judul);
         tvJudul.setTextSize(16);
-        tvJudul.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvJudul.setTypeface(null, Typeface.BOLD);
 
         TextView tvDeskripsi = new TextView(this);
         tvDeskripsi.setText(deskripsi);
@@ -104,6 +147,7 @@ public class EdukasiUserActivity extends AppCompatActivity {
 
         layoutArtikel.addView(artikelItem);
     }
+
 
     private void tambahVideoKeLayout(String judul, int id, String videoUri, String deskripsi) {
         LinearLayout videoItem = new LinearLayout(this);
@@ -132,34 +176,46 @@ public class EdukasiUserActivity extends AppCompatActivity {
         tvDeskripsi.setPadding(0, 8, 0, 0);
 
         VideoView videoView = new VideoView(this);
-        Uri uri = Uri.parse(videoUri);
-        videoView.setVideoURI(uri);
-        videoView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                (int) (getResources().getDisplayMetrics().density * 200)
-        ));
-        videoView.seekTo(1); // thumbnail awal
+        try {
+            Uri uri = Uri.parse(videoUri);
 
-        ImageButton btnPlayPause = new ImageButton(this);
-        btnPlayPause.setImageResource(android.R.drawable.ic_media_play);
-        btnPlayPause.setBackgroundColor(Color.TRANSPARENT);
-        btnPlayPause.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
-
-        btnPlayPause.setOnClickListener(v -> {
-            if (videoView.isPlaying()) {
-                videoView.pause();
-                btnPlayPause.setImageResource(android.R.drawable.ic_media_play);
-            } else {
-                videoView.start();
-                btnPlayPause.setImageResource(android.R.drawable.ic_media_pause);
+            try {
+                getContentResolver().takePersistableUriPermission(
+                        uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            } catch (SecurityException e) {
+                Log.e(TAG, "Permission already granted or uri invalid");
             }
-        });
 
-        // Tambahkan elemen ke tampilan
+            videoView.setVideoURI(uri);
+
+            LinearLayout.LayoutParams videoParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (int) (getResources().getDisplayMetrics().density * 200)
+            );
+            videoView.setLayoutParams(videoParams);
+
+            MediaController mediaController = new MediaController(this);
+            mediaController.setAnchorView(videoView);
+            videoView.setMediaController(mediaController);
+
+            videoView.setOnPreparedListener(mp -> {
+                videoView.seekTo(1);
+                Log.d(TAG, "Video prepared: " + videoUri);
+            });
+
+            videoView.setOnErrorListener((mp, what, extra) -> {
+                Log.e(TAG, "Error playing video - what:" + what + " extra:" + extra);
+                return true;
+            });
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading video", e);
+            tvDeskripsi.setText("[Video tidak dapat dimuat]");
+        }
+
         videoItem.addView(tvTitle);
         videoItem.addView(tvDeskripsi);
         videoItem.addView(videoView);
-        videoItem.addView(btnPlayPause);
 
         layoutVideo.addView(videoItem);
     }

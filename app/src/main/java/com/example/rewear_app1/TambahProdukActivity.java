@@ -3,6 +3,7 @@ package com.example.rewear_app1;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,13 +23,13 @@ import androidx.core.content.ContextCompat;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class TambahProdukActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGES = 1;
     private static final int REQUEST_PERMISSION_CODE = 100;
+    private String namaDepan, namaBelakang;
 
     private AutoCompleteTextView inputKategori;
     private EditText inputNamaBarang, inputKeterangan, inputHarga;
@@ -43,15 +44,16 @@ public class TambahProdukActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
+        // Inisialisasi view
         inputKategori = findViewById(R.id.input_kategori);
         inputNamaBarang = findViewById(R.id.input_namabarang);
         inputKeterangan = findViewById(R.id.input_keterangan);
         inputHarga = findViewById(R.id.input_harga);
         imageUploadButton = findViewById(R.id.input_upgambar);
-        imageUploadButton.setText(imageUris.size() + " gambar dipilih");
         tombolSimpan = findViewById(R.id.upload_button);
 
         dbHelper = new DatabaseHelperProduk(this);
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -144,11 +146,25 @@ public class TambahProdukActivity extends AppCompatActivity {
         }
 
         // Ambil gambar URI pertama
-        String gambarUri = imageUris.get(0).toString(); // Menyimpan satu gambar URI
+//String gambarUri = imageUris.get(0).toString(); // Menyimpan satu gambar URI
+
+
+
+        SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+        String userId = prefs.getString("user_id", "");
+        String namaDepan = prefs.getString("nama_depan", "");
+        String namaBelakang = prefs.getString("nama_belakang", "");
+
+        if (userId.isEmpty()) {
+            Toast.makeText(this, "User tidak dikenali. Silakan login ulang.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        String imageUriString = imageUris.get(0).toString();
 
         // Menyimpan data produk ke database
-        long result = dbHelper.tambahProduk(namaBarang, kategori, keterangan, harga, gambarUri);
-
+        long result = dbHelper.tambahProduk(namaBarang, kategori, keterangan, harga, imageUriString, userId);
         if (result != -1) {
             Toast.makeText(this, "Produk berhasil disimpan", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(TambahProdukActivity.this, TransaksiActivity.class);
@@ -160,10 +176,6 @@ public class TambahProdukActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -174,3 +186,4 @@ public class TambahProdukActivity extends AppCompatActivity {
         }
     }
 }
+

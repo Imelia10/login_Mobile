@@ -1,9 +1,7 @@
 package com.example.rewear_app1;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +12,7 @@ import android.graphics.Color;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 import android.widget.ImageButton;
@@ -21,16 +20,15 @@ import android.graphics.Typeface;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.core.content.FileProvider;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -53,14 +51,21 @@ public class KelolaEdukasiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kelola_edukasi);
 
+        // Initialize views
         btnArtikel = findViewById(R.id.btnArtikel);
         btnVideo = findViewById(R.id.btnVideo);
         btnTambah = findViewById(R.id.btnTambah);
         layoutArtikel = findViewById(R.id.layoutArtikel);
         layoutVideo = findViewById(R.id.layoutVideo);
 
+        // Set initial visibility - show only articles at start
+        layoutArtikel.setVisibility(View.VISIBLE);
+        layoutVideo.setVisibility(View.GONE);
+        isArtikelActive = true;
+
         dbHelper = new DatabaseHelperEdukasi(this);
 
+        // Button click listeners
         btnArtikel.setOnClickListener(v -> {
             layoutArtikel.setVisibility(View.VISIBLE);
             layoutVideo.setVisibility(View.GONE);
@@ -73,8 +78,20 @@ public class KelolaEdukasiActivity extends AppCompatActivity {
             isArtikelActive = false;
         });
 
+        ImageView backIcon = findViewById(R.id.back);
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(KelolaEdukasiActivity.this, AdminActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
         btnTambah.setOnClickListener(v -> showBottomSheetForm());
 
+        // Initialize video picker launcher
         videoPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -198,7 +215,6 @@ public class KelolaEdukasiActivity extends AppCompatActivity {
                 tambahVideoKeLayout(judul, newId, selectedVideoUri, deskripsi);
             }
 
-            // Show success notification for add operation
             Toast.makeText(this, "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show();
             bottomSheetDialog.dismiss();
         });
@@ -277,7 +293,6 @@ public class KelolaEdukasiActivity extends AppCompatActivity {
         try {
             Uri uri = Uri.parse(videoUri);
 
-            // Coba ambil izin lagi untuk memastikan
             try {
                 getContentResolver().takePersistableUriPermission(
                         uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -421,7 +436,6 @@ public class KelolaEdukasiActivity extends AppCompatActivity {
                 }
             }
 
-            // Show success notification for edit operation
             Toast.makeText(this, "Data berhasil di-edit", Toast.LENGTH_SHORT).show();
             bottomSheetDialog.dismiss();
         });
