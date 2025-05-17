@@ -49,6 +49,8 @@
         <activity android:name=".TambahProdukActivity" />
         <activity android:name=".DetailProdukActivity" />
         <activity android:name=".CardUploadBarangActivity" />
+        <activity android:name=".EditProdukActivity"/>
+        <activity android:name=".DetailPesanan"/>
 
 
     </application>

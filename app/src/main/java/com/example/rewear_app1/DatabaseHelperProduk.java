@@ -128,29 +128,37 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
 
     public Produk getProdukById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-
-        String selection = COLUMN_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
-
-        Cursor cursor = db.query(TABLE_PRODUK, null, selection, selectionArgs, null, null, null);
-
+        Cursor cursor = db.query(TABLE_PRODUK, null, COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             String nama = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAMA));
-            String harga = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HARGA));
             String kategori = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_KATEGORI));
-            String gambarUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GAMBAR_URI));
-            String emailPemilik = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL_PEMILIK));
             String deskripsi = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_KETERANGAN));
-            String idPenjualStr = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID_PENJUAL));
-
-            // Membuat objek Produk menggunakan konstruktor yang sesuai
-            Produk produk = new Produk(id, nama, gambarUri, harga, kategori, deskripsi, idPenjualStr);
+            String harga = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HARGA));
+            String gambarUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GAMBAR_URI));
+            String idPenjual = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID_PENJUAL));
+            Produk produk = new Produk(id, nama, gambarUri, harga, kategori, deskripsi, idPenjual);
             cursor.close();
             return produk;
         }
-
         return null;
     }
+
+
+
+    public boolean updateProduk(int id, String nama, String gambarUri, String harga, String kategori, String deskripsi) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAMA, nama);
+        values.put(COLUMN_GAMBAR_URI, gambarUri);
+        values.put(COLUMN_HARGA, harga);
+        values.put(COLUMN_KATEGORI, kategori);
+        values.put(COLUMN_KETERANGAN, deskripsi);
+
+        int rows = db.update(TABLE_PRODUK, values, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        return rows > 0;
+    }
+
+
 
 
     public boolean hapusProduk(int id) {

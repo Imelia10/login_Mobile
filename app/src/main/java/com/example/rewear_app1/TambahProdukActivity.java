@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,7 +30,6 @@ public class TambahProdukActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGES = 1;
     private static final int REQUEST_PERMISSION_CODE = 100;
-    private String namaDepan, namaBelakang;
 
     private AutoCompleteTextView inputKategori;
     private EditText inputNamaBarang, inputKeterangan, inputHarga;
@@ -37,6 +37,8 @@ public class TambahProdukActivity extends AppCompatActivity {
     private ImageView tombolSimpan;
 
     private ArrayList<Uri> imageUris = new ArrayList<>();
+    private LinearLayout previewContainer;
+
     private DatabaseHelperProduk dbHelper;
 
     @Override
@@ -44,16 +46,15 @@ public class TambahProdukActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-        // Inisialisasi view
         inputKategori = findViewById(R.id.input_kategori);
         inputNamaBarang = findViewById(R.id.input_namabarang);
         inputKeterangan = findViewById(R.id.input_keterangan);
         inputHarga = findViewById(R.id.input_harga);
         imageUploadButton = findViewById(R.id.input_upgambar);
         tombolSimpan = findViewById(R.id.upload_button);
+        previewContainer = findViewById(R.id.preview_container);
 
         dbHelper = new DatabaseHelperProduk(this);
-
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -71,6 +72,7 @@ public class TambahProdukActivity extends AppCompatActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
@@ -124,7 +126,24 @@ public class TambahProdukActivity extends AppCompatActivity {
                     imageUris.add(data.getData());
                 }
                 Toast.makeText(this, imageUris.size() + " gambar dipilih", Toast.LENGTH_SHORT).show();
+                tampilkanPreviewGambar();
             }
+        }
+    }
+
+    private void tampilkanPreviewGambar() {
+        previewContainer.removeAllViews(); // Bersihkan container sebelum ditambahkan ulang
+
+        for (Uri uri : imageUris) {
+            ImageView imageView = new ImageView(this);
+            imageView.setImageURI(uri);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
+            layoutParams.setMargins(8, 0, 8, 0);
+            imageView.setLayoutParams(layoutParams);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            previewContainer.addView(imageView);
         }
     }
 
@@ -139,16 +158,10 @@ public class TambahProdukActivity extends AppCompatActivity {
             return;
         }
 
-        // Cek apakah ada gambar yang dipilih
         if (imageUris.isEmpty()) {
             Toast.makeText(this, "Silakan pilih gambar", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // Ambil gambar URI pertama
-//String gambarUri = imageUris.get(0).toString(); // Menyimpan satu gambar URI
-
-
 
         SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
         String userId = prefs.getString("user_id", "");
@@ -160,10 +173,8 @@ public class TambahProdukActivity extends AppCompatActivity {
             return;
         }
 
+        String imageUriString = imageUris.get(0).toString(); // Simpan hanya 1 gambar
 
-        String imageUriString = imageUris.get(0).toString();
-
-        // Menyimpan data produk ke database
         long result = dbHelper.tambahProduk(namaBarang, kategori, keterangan, harga, imageUriString, userId);
         if (result != -1) {
             Toast.makeText(this, "Produk berhasil disimpan", Toast.LENGTH_SHORT).show();
@@ -186,4 +197,3 @@ public class TambahProdukActivity extends AppCompatActivity {
         }
     }
 }
-

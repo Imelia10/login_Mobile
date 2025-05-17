@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="540dp"
-        tools:srcCompat="@drawable/profil2"
+        tools:srcCompat="@drawable/profil"
         tools:ignore="MissingConstraints" />
 
     <TextView

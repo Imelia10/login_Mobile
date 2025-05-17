@@ -164,13 +164,12 @@
 
             <ImageView
                 android:id="@+id/btnBeli"
-                android:layout_width="224dp"
+                android:layout_width="350dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="120dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginTop="150dp"
                 android:contentDescription="Beli Produk"
-                android:src="@drawable/buttonselesai" />
+                android:src="@drawable/buttonbeli" />
 
         </LinearLayout>
     </LinearLayout>

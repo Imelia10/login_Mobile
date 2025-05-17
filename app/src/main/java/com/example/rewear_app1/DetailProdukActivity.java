@@ -4,12 +4,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.AlertDialog;
-import android.widget.*;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class DetailProdukActivity extends AppCompatActivity {
+
+    private static final String TAG = "DetailProdukActivity";
+    private static final int REQUEST_EDIT_PRODUK = 1;
 
     private ImageView imageBarang, btnEdit, btnHapus, btnBeli, fotoPenjual, ivKembali;
     private TextView namaBarang, hargaBarang, deskripsiBarang, namaPenjual;
@@ -24,7 +31,16 @@ public class DetailProdukActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_barang_kita);
 
-        // Inisialisasi komponen
+        initViews();
+        dbHelperProduk = new DatabaseHelperProduk(this);
+        dbHelperUser = new DatabaseHelper(this);
+        getIntentData();
+        getCurrentUserEmail();
+        loadProductData();
+        setupButtons();
+    }
+
+    private void initViews() {
         imageBarang = findViewById(R.id.imageBarang);
         fotoPenjual = findViewById(R.id.fotoPenjual);
         namaBarang = findViewById(R.id.namaBarang);
@@ -35,11 +51,9 @@ public class DetailProdukActivity extends AppCompatActivity {
         btnHapus = findViewById(R.id.btnHapus);
         btnBeli = findViewById(R.id.btnBeli);
         ivKembali = findViewById(R.id.back_icon);
+    }
 
-        dbHelperProduk = new DatabaseHelperProduk(this);
-        dbHelperUser = new DatabaseHelper(this);
-
-        // Ambil ID produk dan asal halaman
+    private void getIntentData() {
         int produkId = getIntent().getIntExtra("produk_id", -1);
         asalHalaman = getIntent().getStringExtra("asal");
 
@@ -49,116 +63,169 @@ public class DetailProdukActivity extends AppCompatActivity {
             return;
         }
 
-        // Ambil produk dari database
         produk = dbHelperProduk.getProdukById(produkId);
         if (produk == null) {
             Toast.makeText(this, "Data produk tidak valid", Toast.LENGTH_SHORT).show();
             finish();
-            return;
         }
+    }
 
-        // Ambil email user login dari SharedPreferences
+    private void getCurrentUserEmail() {
         SharedPreferences preferences = getSharedPreferences("user_session", MODE_PRIVATE);
         currentUserEmail = preferences.getString("email", "");
+        if (currentUserEmail.isEmpty()) {
+            Toast.makeText(this, "Silakan login kembali", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
 
-        // Tampilkan data produk
+    private void loadProductData() {
+        if (produk == null) return;
+
         namaBarang.setText(produk.getNama());
         hargaBarang.setText("Rp " + produk.getHarga());
         deskripsiBarang.setText(produk.getDeskripsi());
 
         if (produk.getGambarUri() != null && !produk.getGambarUri().isEmpty()) {
-            imageBarang.setImageURI(Uri.parse(produk.getGambarUri()));
+            try {
+                imageBarang.setImageURI(Uri.parse(produk.getGambarUri()));
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading product image", e);
+                imageBarang.setImageResource(R.drawable.profil1);
+            }
         } else {
             imageBarang.setImageResource(R.drawable.profil1);
         }
 
-        // Tampilkan info penjual
-        String idPenjual = produk.getIdPenjual();
-        boolean isProdukSendiri = false;
+        loadSellerInfo();
+    }
 
-        if (idPenjual != null && !idPenjual.isEmpty()) {
-            try {
-                int idPenjualInt = Integer.parseInt(idPenjual);
-                User penjual = dbHelperUser.getUserById(idPenjualInt);
+    private void loadSellerInfo() {
+        if (produk == null || produk.getIdPenjual() == null) {
+            namaPenjual.setText("Penjual tidak diketahui");
+            fotoPenjual.setImageResource(R.drawable.profil1);
+            btnEdit.setVisibility(View.GONE);
+            btnHapus.setVisibility(View.GONE);
+            btnBeli.setVisibility(View.GONE);
+            return;
+        }
 
-                if (penjual != null) {
-                    namaPenjual.setText(penjual.getFirstName() + " " + penjual.getLastName());
+        try {
+            int idPenjual = Integer.parseInt(produk.getIdPenjual());
+            User penjual = dbHelperUser.getUserById(idPenjual);
 
-                    if (penjual.getPhotoUri() != null && !penjual.getPhotoUri().isEmpty()) {
-                        fotoPenjual.setImageURI(Uri.parse(penjual.getPhotoUri()));
-                    } else {
-                        fotoPenjual.setImageResource(R.drawable.profil1);
-                    }
+            if (penjual == null) {
+                namaPenjual.setText("Penjual tidak ditemukan");
+                fotoPenjual.setImageResource(R.drawable.profil1);
+                btnEdit.setVisibility(View.GONE);
+                btnHapus.setVisibility(View.GONE);
+                btnBeli.setVisibility(View.VISIBLE);
+                return;
+            }
 
-                    // Bandingkan email user login dengan email penjual
-                    if (penjual.getEmail().equalsIgnoreCase(currentUserEmail)) {
-                        isProdukSendiri = true;
-                    }
+            // Tampilkan info penjual
+            namaPenjual.setText(penjual.getFirstName() + " " + penjual.getLastName());
 
-                } else {
-                    namaPenjual.setText("Penjual tidak ditemukan");
+            if (penjual.getPhotoUri() != null && !penjual.getPhotoUri().isEmpty()) {
+                try {
+                    fotoPenjual.setImageURI(Uri.parse(penjual.getPhotoUri()));
+                } catch (Exception e) {
                     fotoPenjual.setImageResource(R.drawable.profil1);
                 }
-
-            } catch (NumberFormatException e) {
-                namaPenjual.setText("ID Penjual tidak valid");
+            } else {
                 fotoPenjual.setImageResource(R.drawable.profil1);
             }
-        } else {
-            namaPenjual.setText("ID Penjual tidak tersedia");
+
+            // Debugging - tampilkan log
+            Log.d("OWNERSHIP_CHECK", "Current User: " + currentUserEmail);
+            Log.d("OWNERSHIP_CHECK", "Product Owner: " + penjual.getEmail());
+
+            // Cek kepemilikan produk
+            boolean isMyProduct = currentUserEmail.equalsIgnoreCase(penjual.getEmail());
+
+            // Atur visibility tombol
+            btnEdit.setVisibility(isMyProduct ? View.VISIBLE : View.GONE);
+            btnHapus.setVisibility(isMyProduct ? View.VISIBLE : View.GONE);
+            btnBeli.setVisibility(isMyProduct ? View.GONE : View.VISIBLE);
+
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Format ID Penjual tidak valid", e);
+            namaPenjual.setText("ID Penjual tidak valid");
             fotoPenjual.setImageResource(R.drawable.profil1);
+            btnEdit.setVisibility(View.GONE);
+            btnHapus.setVisibility(View.GONE);
+            btnBeli.setVisibility(View.VISIBLE);
         }
+    }
 
-        // Tampilkan atau sembunyikan tombol edit & hapus berdasarkan kepemilikan produk
-        if (isProdukSendiri) {
-            btnEdit.setVisibility(ImageView.VISIBLE);
-            btnHapus.setVisibility(ImageView.VISIBLE);
-        } else {
-            btnEdit.setVisibility(ImageView.GONE);
-            btnHapus.setVisibility(ImageView.GONE);
-        }
-
-        // Tombol edit
+    private void setupButtons() {
         btnEdit.setOnClickListener(v -> {
             Intent intent = new Intent(DetailProdukActivity.this, EditProdukActivity.class);
             intent.putExtra("produk_id", produk.getId());
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_EDIT_PRODUK);
         });
 
-        // Tombol hapus
-        btnHapus.setOnClickListener(v -> {
-            new AlertDialog.Builder(this)
-                    .setTitle("Hapus Produk")
-                    .setMessage("Yakin ingin menghapus produk ini?")
-                    .setPositiveButton("Ya", (dialog, which) -> {
-                        boolean sukses = dbHelperProduk.hapusProduk(produk.getId());
-                        if (sukses) {
-                            Toast.makeText(this, "Produk berhasil dihapus", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(this, "Gagal menghapus produk", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .setNegativeButton("Batal", null)
-                    .show();
-        });
+        btnHapus.setOnClickListener(v -> showDeleteConfirmationDialog());
 
-
-        // Tombol beli
-        btnBeli.setOnClickListener(v ->
-                Toast.makeText(this, "Silakan hubungi penjual untuk membeli produk ini", Toast.LENGTH_SHORT).show()
-        );
-
-        // Tombol kembali
-        ivKembali.setOnClickListener(v -> {
-            if ("cardupload".equals(asalHalaman)) {
-                startActivity(new Intent(this, CardUploadBarangActivity.class));
-            } else if ("transaksi".equals(asalHalaman)) {
-                startActivity(new Intent(this, TransaksiActivity.class));
+        // Pembenaran tombol beli
+        btnBeli.setOnClickListener(v -> {
+            // Pastikan produk tersedia
+            if (produk != null) {
+                Intent intent = new Intent(DetailProdukActivity.this, DetailPesanan.class);
+                // Kirim data produk yang diperlukan
+                intent.putExtra("produk_id", produk.getId());
+                intent.putExtra("produk_nama", produk.getNama());
+                intent.putExtra("produk_harga", produk.getHarga());
+                intent.putExtra("produk_gambar_uri", produk.getGambarUri());
+                intent.putExtra("penjual_id", produk.getIdPenjual());
+                startActivity(intent);
             } else {
-                finish();
+                Toast.makeText(this, "Produk tidak valid", Toast.LENGTH_SHORT).show();
             }
-            finish();
         });
+
+        ivKembali.setOnClickListener(v -> navigateBack());
+    }
+
+    private void showDeleteConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Hapus Produk")
+                .setMessage("Yakin ingin menghapus produk ini?")
+                .setPositiveButton("Ya", (dialog, which) -> {
+                    boolean sukses = dbHelperProduk.hapusProduk(produk.getId());
+                    if (sukses) {
+                        Toast.makeText(this, "Produk berhasil dihapus", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Gagal menghapus produk", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Batal", null)
+                .show();
+    }
+
+    private void navigateBack() {
+        if ("cardupload".equals(asalHalaman)) {
+            startActivity(new Intent(this, CardUploadBarangActivity.class));
+        } else if ("transaksi".equals(asalHalaman)) {
+            startActivity(new Intent(this, TransaksiActivity.class));
+        }
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_EDIT_PRODUK && resultCode == RESULT_OK) {
+            produk = dbHelperProduk.getProdukById(produk.getId());
+            loadProductData();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (dbHelperProduk != null) dbHelperProduk.close();
+        if (dbHelperUser != null) dbHelperUser.close();
+        super.onDestroy();
     }
 }
