@@ -3,31 +3,16 @@ package com.example.rewear_app1;
 public class Transaksi {
     private int id;
     private String emailPembeli;
+    private int idPembeli;
     private int idProduk;
+    private String namaBarang;
     private String tanggal;
     private String alamat;
     private String metodePembayaran;
     private double ongkir;
     private double diskon;
     private double total;
-    private String status; // pending, completed, cancelled
-
-    public Transaksi() {}
-
-    public Transaksi(int id, String emailPembeli, int idProduk, String tanggal,
-                     String alamat, String metodePembayaran, double ongkir,
-                     double diskon, double total, String status) {
-        this.id = id;
-        this.emailPembeli = emailPembeli;
-        this.idProduk = idProduk;
-        this.tanggal = tanggal;
-        this.alamat = alamat;
-        this.metodePembayaran = metodePembayaran;
-        this.ongkir = ongkir;
-        this.diskon = diskon;
-        this.total = total;
-        this.status = status;
-    }
+    private String status;
 
     // Getter dan Setter
     public int getId() { return id; }
@@ -36,8 +21,14 @@ public class Transaksi {
     public String getEmailPembeli() { return emailPembeli; }
     public void setEmailPembeli(String emailPembeli) { this.emailPembeli = emailPembeli; }
 
+    public int getIdPembeli() { return idPembeli; }
+    public void setIdPembeli(int idPembeli) { this.idPembeli = idPembeli; }
+
     public int getIdProduk() { return idProduk; }
     public void setIdProduk(int idProduk) { this.idProduk = idProduk; }
+
+    public String getNamaBarang() { return namaBarang; }
+    public void setNamaBarang(String namaBarang) { this.namaBarang = namaBarang; }
 
     public String getTanggal() { return tanggal; }
     public void setTanggal(String tanggal) { this.tanggal = tanggal; }

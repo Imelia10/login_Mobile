@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- HEADER TETAP -->
+    <!-- HEADER -->
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="413dp"
@@ -15,36 +15,31 @@
         android:background="@drawable/topbar"
         android:gravity="center_vertical"
         android:orientation="vertical"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Horizontal layout for back button and space -->
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/centangberhasil"
+            android:layout_marginTop="10dp" />
 
-        <!-- Image above the title -->
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/centangberhasil"
-        android:layout_marginTop="10dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Pembayaran Berhasil"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
 
-    <!-- Title text -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Pembayaran Berhasil"
-        android:textColor="@android:color/white"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp" />
-</LinearLayout>
-
-
-    <!-- SCROLLABLE CONTENT MULAI DARI SINI -->
+    <!-- SCROLLABLE CONTENT -->
     <ScrollView
         android:id="@+id/scroll_area"
         android:layout_width="match_parent"
@@ -60,7 +55,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-
 
             <!-- Barang -->
             <TextView
@@ -80,13 +74,10 @@
                 android:padding="12dp"
                 android:layout_marginTop="8dp">
 
-                <EditText
+                <TextView
                     android:id="@+id/etBarang"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Dress"
-                    android:focusable="false"
-                    android:background="@android:color/transparent"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -108,13 +99,10 @@
                 android:padding="12dp"
                 android:layout_marginTop="8dp">
 
-                <EditText
+                <TextView
                     android:id="@+id/etHarga"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:focusable="false"
-                    android:text="Rp 50.000"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -136,13 +124,10 @@
                 android:padding="12dp"
                 android:layout_marginTop="8dp">
 
-                <EditText
+                <TextView
                     android:id="@+id/etAlamat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Rungkut Asri Timur, SBY"
-                    android:focusable="false"
-                    android:background="@android:color/transparent"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -164,13 +149,10 @@
                 android:padding="12dp"
                 android:layout_marginTop="8dp">
 
-                <EditText
+                <TextView
                     android:id="@+id/etMetode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="COD (Cash On Delivery)"
-                    android:focusable="false"
-                    android:background="@android:color/transparent"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -194,44 +176,19 @@
                     android:id="@+id/tvTanggalPesanan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="28 Juni 2025"
-                    android:textSize="14sp"
-                    android:textColor="#000000" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Tipe Pengantaran"
-                    android:textSize="12sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/tvTipePengantaran"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ekonomi"
                     android:textSize="14sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
             <View
-                android:layout_width="358dp"
+                android:layout_width="match_parent"
                 android:layout_height="1.8dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
                 android:background="@color/black"
                 android:elevation="2dp" />
 
-            <!-- Rincian Biaya dengan label dan nilai berdampingan -->
+            <!-- Rincian Biaya -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -256,7 +213,6 @@
                         android:id="@+id/tvTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rp 50.000"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -278,10 +234,8 @@
                         android:id="@+id/tvDeliveryCharge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rp 15.000"
                         android:textSize="14sp" />
                 </LinearLayout>
-
 
                 <!-- Discount -->
                 <LinearLayout
@@ -298,10 +252,9 @@
                         android:textSize="12sp" />
 
                     <TextView
-                        android:id="@+id/discount"
+                        android:id="@+id/tvDiscount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="-Rp 15.000"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -328,12 +281,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="Rp 50.000"
                     android:textSize="16sp"
                     android:textColor="#000000" />
             </LinearLayout>
 
-            <!-- Tombol -->
+            <!-- Tombol Selesai -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -342,16 +294,16 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/btnSelesai"
                     android:layout_width="400dp"
-                android:layout_height="60dp"
-                android:src="@drawable/buttonselesai"
-                android:layout_marginTop="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="70dp" />
+                    android:layout_height="60dp"
+                    android:src="@drawable/buttonselesai"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="70dp" />
             </LinearLayout>
         </LinearLayout>
-
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

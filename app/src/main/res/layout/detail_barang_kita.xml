@@ -42,9 +42,9 @@
         <!-- Gambar Barang -->
         <ImageView
             android:id="@+id/imageBarang"
+            android:layout_marginTop="3dp"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:layout_marginTop="5dp"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:contentDescription="Gambar Barang"
@@ -53,7 +53,7 @@
         <!-- Konten -->
         <LinearLayout
             android:id="@+id/detailContainer"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:background="@drawable/rounded_detail"
             android:orientation="vertical"
             android:padding="16dp"
@@ -76,16 +76,16 @@
 
                     <TextView
                         android:id="@+id/namaBarang"
-                        android:text="Nama Barang"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="Nama Barang"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/hargaBarang"
                         android:text="Rp 0"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -93,17 +93,17 @@
                 <!-- Tombol Edit & Hapus (Hanya untuk barang sendiri) -->
                 <ImageView
                     android:id="@+id/btnHapus"
-                    android:layout_width="55dp"
+                    android:layout_width="48dp"
                     android:layout_height="55dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/hapus"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/iconhapus1"
                     android:contentDescription="Hapus Produk" />
 
                 <ImageView
                     android:id="@+id/btnEdit"
-                    android:layout_width="60dp"
+                    android:layout_width="47dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/pensiledit"
+                    android:src="@drawable/iconedit1"
                     android:contentDescription="Edit Produk" />
             </LinearLayout>
 
@@ -118,8 +118,8 @@
 
                 <ImageView
                     android:id="@+id/fotoPenjual"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/profil1" />
@@ -132,6 +132,7 @@
                     <TextView
                         android:id="@+id/namaPenjual"
                         android:layout_width="wrap_content"
+                        android:textSize="20dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:text="Penjual"
@@ -142,17 +143,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Aktif"
-                        android:textSize="12sp" />
+                        android:textSize="15sp" />
                 </LinearLayout>
             </LinearLayout>
 
             <!-- Deskripsi -->
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:textSize="18dp"
                 android:text="Detail Produk"
                 android:textStyle="bold" />
 

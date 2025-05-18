@@ -71,18 +71,23 @@ public class TambahProdukActivity extends AppCompatActivity {
             private boolean isEditing = false;
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
             @Override
             public void afterTextChanged(Editable s) {
                 if (isEditing) return;
                 isEditing = true;
 
-                String cleanString = s.toString().replaceAll("[Rp.,\\s]", "");
                 try {
+                    String cleanString = s.toString().replaceAll("[Rp.,\\s]", "");
+                    if (cleanString.isEmpty()) {
+                        inputHarga.setText("");
+                        isEditing = false;
+                        return;
+                    }
                     long parsed = Long.parseLong(cleanString);
                     String formatted = NumberFormat.getNumberInstance(new Locale("id", "ID")).format(parsed);
                     inputHarga.setText("Rp " + formatted);
@@ -151,7 +156,10 @@ public class TambahProdukActivity extends AppCompatActivity {
         String kategori = inputKategori.getText().toString().trim();
         String namaBarang = inputNamaBarang.getText().toString().trim();
         String keterangan = inputKeterangan.getText().toString().trim();
-        String harga = inputHarga.getText().toString().trim().replace("Rp", "").replaceAll("[.,\\s]", "");
+        String hargaInput = inputHarga.getText().toString().trim();
+
+        // Hapus "Rp" dan tanda titik, spasi dari harga untuk simpan ke db
+        String harga = hargaInput.replace("Rp", "").replaceAll("[.,\\s]", "");
 
         if (kategori.isEmpty() || namaBarang.isEmpty() || harga.isEmpty()) {
             Toast.makeText(this, "Kategori, Nama, Harga wajib diisi", Toast.LENGTH_SHORT).show();
@@ -178,10 +186,12 @@ public class TambahProdukActivity extends AppCompatActivity {
         long result = dbHelper.tambahProduk(namaBarang, kategori, keterangan, harga, imageUriString, userId);
         if (result != -1) {
             Toast.makeText(this, "Produk berhasil disimpan", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(TambahProdukActivity.this, TransaksiActivity.class);
+
+            Intent intent = new Intent(TambahProdukActivity.this, CardUploadBarangActivity.class);
             intent.putExtra("kategori_terpilih", kategori);
             startActivity(intent);
-            finish();
+            finish();  // Agar activity ini ditutup supaya back ke list reload
+
         } else {
             Toast.makeText(this, "Gagal menyimpan produk", Toast.LENGTH_SHORT).show();
         }

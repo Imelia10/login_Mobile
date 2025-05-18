@@ -138,7 +138,7 @@
         android:id="@+id/fab_custom1"
         android:layout_width="72dp"
         android:layout_height="70dp"
-        android:src="@drawable/profil1"
+        android:src="@drawable/profil2"
         android:background="@drawable/bg_bottom_sc"
         android:elevation="8dp"
         android:clickable="true"
