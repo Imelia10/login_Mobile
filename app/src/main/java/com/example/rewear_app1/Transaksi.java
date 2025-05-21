@@ -1,8 +1,11 @@
 package com.example.rewear_app1;
 
 public class Transaksi {
+    private int idUser;
     private int id;
     private String emailPembeli;
+    private String emailUser;
+
     private int idPembeli;
     private int idProduk;
     private String namaBarang;
@@ -15,6 +18,23 @@ public class Transaksi {
     private String status;
 
     // Getter dan Setter
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    // Tambahkan setter dan getter ini:
+    public String getEmailUser() {
+        return emailUser;
+    }
+
+    public void setEmailUser(String emailUser) {
+        this.emailUser = emailUser;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

@@ -123,7 +123,6 @@ public class DetailProdukActivity extends AppCompatActivity {
                 return;
             }
 
-            // Tampilkan info penjual
             namaPenjual.setText(penjual.getFirstName() + " " + penjual.getLastName());
 
             if (penjual.getPhotoUri() != null && !penjual.getPhotoUri().isEmpty()) {
@@ -136,14 +135,11 @@ public class DetailProdukActivity extends AppCompatActivity {
                 fotoPenjual.setImageResource(R.drawable.profil1);
             }
 
-            // Debugging - tampilkan log
             Log.d("OWNERSHIP_CHECK", "Current User: " + currentUserEmail);
             Log.d("OWNERSHIP_CHECK", "Product Owner: " + penjual.getEmail());
 
-            // Cek kepemilikan produk
             boolean isMyProduct = currentUserEmail.equalsIgnoreCase(penjual.getEmail());
 
-            // Atur visibility tombol
             btnEdit.setVisibility(isMyProduct ? View.VISIBLE : View.GONE);
             btnHapus.setVisibility(isMyProduct ? View.VISIBLE : View.GONE);
             btnBeli.setVisibility(isMyProduct ? View.GONE : View.VISIBLE);
@@ -167,23 +163,42 @@ public class DetailProdukActivity extends AppCompatActivity {
 
         btnHapus.setOnClickListener(v -> showDeleteConfirmationDialog());
 
-        // Pembenaran tombol beli
         btnBeli.setOnClickListener(v -> {
-            // Pastikan produk tersedia
-            if (produk != null) {
+            if (produk == null) {
+                Toast.makeText(this, "Produk tidak ditemukan", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Dapatkan email penjual dari data User
+            try {
+                int idPenjual = Integer.parseInt(produk.getIdPenjual());
+                User penjual = dbHelperUser.getUserById(idPenjual);
+
+                if (penjual == null) {
+                    Toast.makeText(this, "Data penjual tidak ditemukan", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String emailPenjual = penjual.getEmail();
+
+                if (currentUserEmail.equals(emailPenjual)) {
+                    Toast.makeText(this, "Kamu tidak bisa membeli produk milik sendiri", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Intent intent = new Intent(DetailProdukActivity.this, DetailPesanan.class);
-                // Kirim data produk yang diperlukan
                 intent.putExtra("produk_id", produk.getId());
                 intent.putExtra("produk_nama", produk.getNama());
                 intent.putExtra("produk_harga", produk.getHarga());
                 intent.putExtra("produk_gambar_uri", produk.getGambarUri());
                 intent.putExtra("penjual_id", produk.getIdPenjual());
                 startActivity(intent);
-            } else {
-                Toast.makeText(this, "Produk tidak valid", Toast.LENGTH_SHORT).show();
+
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "ID Penjual tidak valid", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error parsing seller ID", e);
             }
         });
-
         ivKembali.setOnClickListener(v -> navigateBack());
     }
 

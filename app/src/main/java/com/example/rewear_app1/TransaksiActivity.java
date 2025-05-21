@@ -24,8 +24,7 @@ public class TransaksiActivity extends AppCompatActivity {
     private SearchView searchView;
     private TextView tvBelumAdaBarang;
     private GridLayout gridProduk;
-    private ImageView backIcon; // Tambahan untuk back icon
-
+    private ImageView backIcon;
     private DatabaseHelperProduk dbHelper;
     private String kategoriAktif = "Beli";
 
@@ -34,31 +33,43 @@ public class TransaksiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaksi);
 
-        // Inisialisasi UI components
+        // Initialize UI components
         btnBeli = findViewById(R.id.btnbeli);
         btnSewa = findViewById(R.id.btnsewa);
         btnTukarTambah = findViewById(R.id.btntukartambah);
         searchView = findViewById(R.id.cari);
         tvBelumAdaBarang = findViewById(R.id.tvBelumAdaBarang);
         gridProduk = findViewById(R.id.gridProduk);
-        backIcon = findViewById(R.id.back_icon); // Inisialisasi back icon
+        backIcon = findViewById(R.id.back_icon);
 
         dbHelper = new DatabaseHelperProduk(this);
 
-        // Tombol back
+        // Handle back icon click
         backIcon.setOnClickListener(v -> {
-            finish(); // kembali ke aktivitas sebelumnya
-            // Atau bisa diarahkan ke HomeActivity seperti ini:
-            // startActivity(new Intent(this, HomeActivity.class));
+            // Clear the activity stack and go to HomeActivity
+            Intent intent = new Intent(TransaksiActivity.this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
         });
 
-        // Terima kategori dari intent
-        String kategoriTerpilih = getIntent().getStringExtra("kategori_terpilih");
-        if (kategoriTerpilih != null) {
-            kategoriAktif = kategoriTerpilih;
+        // Get category from intent
+        if (getIntent().hasExtra("kategori_terpilih")) {
+            kategoriAktif = getIntent().getStringExtra("kategori_terpilih");
         }
 
-        // Tombol kategori listener
+        // Set up category buttons
+        setupCategoryButtons();
+
+        // Set up search view
+        setupSearchView();
+
+        // Set initial display
+        setSelectedButtonBasedOnCategory();
+        tampilkanProduk("", kategoriAktif);
+    }
+
+    private void setupCategoryButtons() {
         btnBeli.setOnClickListener(v -> {
             kategoriAktif = "Beli";
             setSelectedButton(btnBeli);
@@ -76,8 +87,9 @@ public class TransaksiActivity extends AppCompatActivity {
             setSelectedButton(btnTukarTambah);
             tampilkanProduk(searchView.getQuery().toString(), kategoriAktif);
         });
+    }
 
-        // SearchView listener
+    private void setupSearchView() {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -91,8 +103,9 @@ public class TransaksiActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
-        // Set tampilan awal
+    private void setSelectedButtonBasedOnCategory() {
         switch (kategoriAktif) {
             case "Beli":
                 setSelectedButton(btnBeli);
@@ -104,7 +117,6 @@ public class TransaksiActivity extends AppCompatActivity {
                 setSelectedButton(btnTukarTambah);
                 break;
         }
-        tampilkanProduk("", kategoriAktif);
     }
 
     private void setSelectedButton(Button selectedButton) {
@@ -160,7 +172,7 @@ public class TransaksiActivity extends AppCompatActivity {
             iv.setOnClickListener(v -> {
                 Intent intent = new Intent(TransaksiActivity.this, DetailProdukActivity.class);
                 intent.putExtra("produk_id", produk.getId());
-                intent.putExtra("from", "transaksi"); // Tambahkan informasi asal
+                intent.putExtra("from", "transaksi");
                 startActivity(intent);
             });
 
@@ -185,4 +197,5 @@ public class TransaksiActivity extends AppCompatActivity {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
     }
+
 }

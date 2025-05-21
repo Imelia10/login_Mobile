@@ -1,7 +1,5 @@
 package com.example.rewear_app1;
 
-
-
 public class Produk {
     private int id;
     private String nama;
@@ -9,10 +7,11 @@ public class Produk {
     private String harga;
     private String kategori;
     private String deskripsi;
-    private String idPenjual;  // Ubah ke String karena menggunakan userId sebagai String
+    private String idPenjual;
+    private String status;
 
     // Constructor
-    public Produk(int id, String nama, String gambarUri, String harga, String kategori, String deskripsi, String idPenjual) {
+    public Produk(int id, String nama, String gambarUri, String harga, String kategori, String deskripsi, String idPenjual, String status) {
         this.id = id;
         this.nama = nama;
         this.gambarUri = gambarUri;
@@ -20,6 +19,7 @@ public class Produk {
         this.kategori = kategori;
         this.deskripsi = deskripsi;
         this.idPenjual = idPenjual;
+        this.status = status;
     }
 
     // Getter dan Setter
@@ -30,4 +30,5 @@ public class Produk {
     public String getKategori() { return kategori; }
     public String getDeskripsi() { return deskripsi; }
     public String getIdPenjual() { return idPenjual; }
+    public String getStatus() { return status; }
 }

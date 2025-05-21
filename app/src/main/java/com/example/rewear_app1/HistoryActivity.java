@@ -96,7 +96,8 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void addTransactionToHistory(Transaksi transaction) {
-        Produk product = dbHelperProduk.getProdukById(transaction.getIdProduk());
+        // Use the new method that can retrieve deleted products
+        Produk product = dbHelperProduk.getProdukForHistory(transaction.getIdProduk());
         if (product == null) return;
 
         LayoutInflater inflater = LayoutInflater.from(this);

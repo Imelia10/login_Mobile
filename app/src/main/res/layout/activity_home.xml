@@ -211,6 +211,7 @@
 
     <!-- Ikon navigasi tambahan -->
     <ImageView
+        android:id="@+id/icon_dompet"
         android:layout_width="48dp"
         android:layout_height="60dp"
         android:layout_gravity="bottom|end"

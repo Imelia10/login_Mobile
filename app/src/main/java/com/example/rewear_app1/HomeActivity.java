@@ -15,7 +15,6 @@ public class HomeActivity extends AppCompatActivity {
     TextView hiTextView;
     ImageView profilImageView;
     DatabaseHelper dbHelper;
-
     String currentUserEmail;
 
     @Override
@@ -27,11 +26,12 @@ public class HomeActivity extends AppCompatActivity {
         profilImageView = findViewById(R.id.profil1);
         dbHelper = new DatabaseHelper(this);
 
-        // Ambil email dari SharedPreferences
+        // Ambil data user dari SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE);
         currentUserEmail = sharedPreferences.getString("email", "");
+        String userId = sharedPreferences.getString("user_id", "");
 
-        // Tampilkan nama depan di TextView
+        // Tampilkan nama depan user
         if (!currentUserEmail.isEmpty()) {
             User user = dbHelper.getUserByEmail(currentUserEmail);
             if (user != null) {
@@ -44,6 +44,15 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(HomeActivity.this, ProfilActivity.class);
             intent.putExtra("email", currentUserEmail);
             startActivity(intent);
+        });
+
+        // Klik ke DompetActivity (ditambahkan)
+        ImageView dompetIcon = findViewById(R.id.icon_dompet); // Pastikan ada di XML
+        dompetIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, DompetActivity.class);
+            intent.putExtra("user_id", userId); // pastikan variabel userId terisi dengan benar
+            startActivity(intent);
+
         });
 
         // Klik ke Card Transaksi

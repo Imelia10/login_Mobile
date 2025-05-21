@@ -12,7 +12,7 @@ import java.util.List;
 public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ReWearTransaksiDB";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Nama tabel dan kolom
     private static final String TABLE_TRANSAKSI = "transaksi";
@@ -61,24 +61,45 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
     // Menambahkan transaksi baru
     public long addTransaksi(Transaksi transaksi) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
-        values.put(COLUMN_EMAIL_PEMBELI, transaksi.getEmailPembeli());
-        values.put(COLUMN_ID_PEMBELI, transaksi.getIdPembeli());
-        values.put(COLUMN_ID_PRODUK, transaksi.getIdProduk());
-        values.put(COLUMN_NAMA_BARANG, transaksi.getNamaBarang());
-        values.put(COLUMN_TANGGAL, transaksi.getTanggal());
-        values.put(COLUMN_ALAMAT, transaksi.getAlamat());
-        values.put(COLUMN_METODE_PEMBAYARAN, transaksi.getMetodePembayaran());
-        values.put(COLUMN_ONGKIR, transaksi.getOngkir());
-        values.put(COLUMN_DISKON, transaksi.getDiskon());
-        values.put(COLUMN_TOTAL, transaksi.getTotal());
-        values.put(COLUMN_STATUS, transaksi.getStatus());
+        values.put("id_produk", transaksi.getIdProduk());
+        values.put("email_pembeli", transaksi.getEmailPembeli());
+        values.put("tanggal", transaksi.getTanggal());
+        values.put("alamat", transaksi.getAlamat());
+        values.put("metode_pembayaran", transaksi.getMetodePembayaran());
+        values.put("ongkir", transaksi.getOngkir());
+        values.put("diskon", transaksi.getDiskon());
+        values.put("total", transaksi.getTotal());
 
-        long id = db.insert(TABLE_TRANSAKSI, null, values);
+        long id = db.insert("transaksi", null, values);
         db.close();
         return id;
     }
+
+    public List<Transaksi> getAllTransaksi() {
+        List<Transaksi> transaksiList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM transaksi", null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                Transaksi transaksi = new Transaksi();
+                transaksi.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                transaksi.setIdProduk(cursor.getInt(cursor.getColumnIndexOrThrow("id_produk")));
+                transaksi.setEmailUser(cursor.getString(cursor.getColumnIndexOrThrow("email_user")));
+                transaksi.setTanggal(cursor.getString(cursor.getColumnIndexOrThrow("tanggal")));
+                transaksi.setTotal(cursor.getDouble(cursor.getColumnIndexOrThrow("total")));
+                transaksi.setIdUser(cursor.getInt(cursor.getColumnIndexOrThrow("id_user"))); // Pastikan kolom ini ada
+                transaksiList.add(transaksi);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return transaksiList;
+    }
+
+
 
     // Mendapatkan transaksi berdasarkan id
     public Transaksi getTransaksiById(int id) {
@@ -138,7 +159,24 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
     }
 
 
+    // Di DatabaseHelperTransaksi.java
+    public boolean pindahkanKeHistory(int transaksiId) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        // 1. Ambil data transaksi
+        Transaksi transaksi = getTransaksiById(transaksiId);
+        if (transaksi == null) return false;
+
+        // 2. Simpan ke tabel history (atau update status)
+        ContentValues values = new ContentValues();
+        values.put("status", "completed"); // Tambahkan kolom status
+
+        int rowsAffected = db.update(TABLE_TRANSAKSI, values,
+                COLUMN_ID + "=?", new String[]{String.valueOf(transaksiId)});
+
+        db.close();
+        return rowsAffected > 0;
+    }
 
     public Transaksi getTransaksiTerakhir(String emailPembeli) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -244,17 +282,14 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
     }
 
     // Update status transaksi berdasarkan id
-    public int updateStatusTransaksi(int id, String status) {
+    public boolean updateStatusTransaksi(int transaksiId, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
-        values.put(COLUMN_STATUS, status);
-
-        int result = db.update(TABLE_TRANSAKSI, values, COLUMN_ID + " = ?",
-                new String[]{String.valueOf(id)});
-        db.close();
-        return result;
+        values.put("status", status);
+        int rowsAffected = db.update("transaksi", values, "id=?", new String[]{String.valueOf(transaksiId)});
+        return rowsAffected > 0;
     }
+
 
     // Hapus transaksi berdasarkan id
     public void deleteTransaksi(int id) {

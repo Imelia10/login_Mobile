@@ -13,7 +13,7 @@ import java.util.List;
 public class DatabaseHelperProduk extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "ReWearDB";
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
 
     public static final String TABLE_PRODUK = "produk";
 
@@ -27,6 +27,7 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
     public static final String COLUMN_NAMA_DEPAN = "namaDepan";
     public static final String COLUMN_NAMA_BELAKANG = "namaBelakang";
     public static final String COLUMN_ID_PENJUAL = "idPenjual";
+    public static final String COLUMN_STATUS = "status";
 
     public DatabaseHelperProduk(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -44,7 +45,8 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
                 COLUMN_EMAIL_PEMILIK + " TEXT," +
                 COLUMN_NAMA_DEPAN + " TEXT," +
                 COLUMN_NAMA_BELAKANG + " TEXT," +
-                COLUMN_ID_PENJUAL + " TEXT" +
+                COLUMN_ID_PENJUAL + " TEXT," +
+                COLUMN_STATUS + " TEXT DEFAULT 'Tersedia'" +
                 ");");
     }
 
@@ -62,17 +64,17 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
         values.put("deskripsi", keterangan);
         values.put("harga", harga);
         values.put("gambarUri", imageUriString);
-        values.put("idPenjual", userId); // ini untuk tahu siapa pemilik produk
+        values.put("idPenjual", userId);
+        values.put("status", "Tersedia"); // Default status
 
         return db.insert("produk", null, values);
     }
 
-
     public List<Produk> getProdukByKategoriAndKeywordAndUser(String kategori, String keyword, String userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         List<Produk> produkList = new ArrayList<>();
-        String selection = "kategori = ? AND idPenjual = ? AND (nama LIKE ? OR deskripsi LIKE ?)";
-        String[] selectionArgs = new String[]{kategori, userId, "%" + keyword + "%", "%" + keyword + "%"};
+        String selection = "kategori = ? AND idPenjual = ? AND (nama LIKE ? OR deskripsi LIKE ?) AND status = ?";
+        String[] selectionArgs = new String[]{kategori, userId, "%" + keyword + "%", "%" + keyword + "%", "Tersedia"};
         Cursor cursor = db.query(TABLE_PRODUK, null, selection, selectionArgs, null, null, null);
 
         if (cursor != null) {
@@ -84,9 +86,8 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
                 String kategoriProduk = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_KATEGORI));
                 String deskripsi = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_KETERANGAN));
                 String idPenjualStr = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID_PENJUAL));
-
-                // Pastikan idPenjual bertipe String
-                Produk produk = new Produk(id, nama, gambarUri, harga, kategoriProduk, deskripsi, idPenjualStr);
+                String status = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS));
+                Produk produk = new Produk(id, nama, gambarUri, harga, kategoriProduk, deskripsi, idPenjualStr, status);
                 produkList.add(produk);
             }
             cursor.close();
@@ -94,13 +95,23 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
         return produkList;
     }
 
+    public boolean updateStatusProduk(int id, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_STATUS, status);
+
+        int rows = db.update(TABLE_PRODUK, values,
+                COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+        return rows > 0;
+    }
 
     public List<Produk> getProdukByKategoriAndKeyword(String kategori, String keyword) {
         List<Produk> produkList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selection = COLUMN_KATEGORI + " = ? AND " + COLUMN_NAMA + " LIKE ?";
-        String[] selectionArgs = {kategori, "%" + keyword + "%"};
+        String selection = COLUMN_KATEGORI + " = ? AND " + COLUMN_NAMA + " LIKE ? AND " + COLUMN_STATUS + " = ?";
+        String[] selectionArgs = {kategori, "%" + keyword + "%", "Tersedia"};
 
         Cursor cursor = db.query(TABLE_PRODUK, null, selection, selectionArgs, null, null, null);
 
@@ -114,9 +125,8 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
                 String emailPemilik = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL_PEMILIK));
                 String deskripsi = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_KETERANGAN));
                 String idPenjualStr = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID_PENJUAL));
-
-                // Menggunakan konstruktor yang benar
-                Produk produk = new Produk(id, nama, gambarUri, harga, kategoriDb, deskripsi, idPenjualStr);
+                String status = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS));
+                Produk produk = new Produk(id, nama, gambarUri, harga, kategoriDb, deskripsi, idPenjualStr, status);
                 produkList.add(produk);
             } while (cursor.moveToNext());
             cursor.close();
@@ -125,8 +135,8 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
         return produkList;
     }
 
-
-    public Produk getProdukById(int id) {
+    // New method to get product for history (including deleted products)
+    public Produk getProdukForHistory(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_PRODUK, null, COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
@@ -136,14 +146,35 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
             String harga = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HARGA));
             String gambarUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GAMBAR_URI));
             String idPenjual = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID_PENJUAL));
-            Produk produk = new Produk(id, nama, gambarUri, harga, kategori, deskripsi, idPenjual);
+            String status = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS));
+            Produk produk = new Produk(id, nama, gambarUri, harga, kategori, deskripsi, idPenjual, status);
+
             cursor.close();
             return produk;
         }
         return null;
     }
 
+    public Produk getProdukById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = COLUMN_ID + "=? AND " + COLUMN_STATUS + "=?";
+        String[] selectionArgs = {String.valueOf(id), "Tersedia"};
+        Cursor cursor = db.query(TABLE_PRODUK, null, selection, selectionArgs, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            String nama = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAMA));
+            String kategori = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_KATEGORI));
+            String deskripsi = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_KETERANGAN));
+            String harga = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HARGA));
+            String gambarUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GAMBAR_URI));
+            String idPenjual = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID_PENJUAL));
+            String status = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS));
+            Produk produk = new Produk(id, nama, gambarUri, harga, kategori, deskripsi, idPenjual, status);
 
+            cursor.close();
+            return produk;
+        }
+        return null;
+    }
 
     public boolean updateProduk(int id, String nama, String gambarUri, String harga, String kategori, String deskripsi) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -158,17 +189,14 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
         return rows > 0;
     }
 
-
-
-
     public boolean hapusProduk(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int hasil = db.delete("produk", "id=?", new String[]{String.valueOf(id)});
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_STATUS, "Dihapus");
+        int rows = db.update(TABLE_PRODUK, values, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
         db.close();
-        return hasil > 0;
+        return rows > 0;
     }
-
-
 
     public void printAllUsers() {
         SQLiteDatabase db = this.getReadableDatabase();
