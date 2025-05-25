@@ -235,6 +235,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Simpan data user ke SharedPreferences
                 SharedPreferences sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("email_login", user.getEmail()); // atau apapun field email user-nya
                 editor.putString("user_id", String.valueOf(user.getId()));
                 editor.putString("firstName", user.getFirstName());
                 editor.putString("lastName", user.getLastName());

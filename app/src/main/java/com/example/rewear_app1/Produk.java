@@ -10,7 +10,7 @@ public class Produk {
     private String idPenjual;
     private String status;
 
-    // Constructor
+    // Constructor lengkap
     public Produk(int id, String nama, String gambarUri, String harga, String kategori, String deskripsi, String idPenjual, String status) {
         this.id = id;
         this.nama = nama;
@@ -22,7 +22,11 @@ public class Produk {
         this.status = status;
     }
 
-    // Getter dan Setter
+    // Konstruktor kosong
+    public Produk() {
+    }
+
+    // Getter
     public int getId() { return id; }
     public String getNama() { return nama; }
     public String getGambarUri() { return gambarUri; }
@@ -31,4 +35,14 @@ public class Produk {
     public String getDeskripsi() { return deskripsi; }
     public String getIdPenjual() { return idPenjual; }
     public String getStatus() { return status; }
+
+    // Setter
+    public void setId(int id) { this.id = id; }
+    public void setNama(String nama) { this.nama = nama; }
+    public void setGambarUri(String gambarUri) { this.gambarUri = gambarUri; }
+    public void setHarga(String harga) { this.harga = harga; }
+    public void setKategori(String kategori) { this.kategori = kategori; }
+    public void setDeskripsi(String deskripsi) { this.deskripsi = deskripsi; }
+    public void setIdPenjual(String idPenjual) { this.idPenjual = idPenjual; }
+    public void setStatus(String status) { this.status = status; }
 }

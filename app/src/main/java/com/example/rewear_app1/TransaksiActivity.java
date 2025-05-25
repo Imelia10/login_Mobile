@@ -173,8 +173,10 @@ public class TransaksiActivity extends AppCompatActivity {
                 Intent intent = new Intent(TransaksiActivity.this, DetailProdukActivity.class);
                 intent.putExtra("produk_id", produk.getId());
                 intent.putExtra("from", "transaksi");
+                intent.putExtra("kategori", kategoriAktif); // <-- tambahkan ini
                 startActivity(intent);
             });
+
 
             TextView nama = new TextView(this);
             nama.setText(produk.getNama());

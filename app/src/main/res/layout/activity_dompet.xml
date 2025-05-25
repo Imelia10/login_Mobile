@@ -52,13 +52,21 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_marginTop="50dp"
+                android:layout_height="1dp"
+                android:background="@color/black"
+                android:layout_marginBottom="16dp"/>
+
             <!-- Saldo Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="145dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="15dp"
                 android:text="Saldo Anda"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -77,53 +85,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#E0E0E0"
+                android:background="@color/black"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Transaksi Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pendapatan"
-                android:textSize="20sp"
-
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Transaction Items -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- Transaction 1 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="16dp">
-
-                    <TextView
-                        android:id="@+id/tvPendapatan"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Rp 55.000"
-                        android:textSize="16sp"
-                        android:textColor="#000000"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="25-01-2021"
-                        android:textColor="#757575"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

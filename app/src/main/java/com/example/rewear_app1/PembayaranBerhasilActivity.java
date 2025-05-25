@@ -125,8 +125,8 @@ public class PembayaranBerhasilActivity extends AppCompatActivity {
             return;
         }
 
-        // Ambil data penting untuk insert ke dompet
-        int penjualId = -1;
+        // Ambil data penting
+        int penjualId;
         try {
             penjualId = Integer.parseInt(produk.getIdPenjual());
         } catch (NumberFormatException e) {
@@ -136,11 +136,10 @@ public class PembayaranBerhasilActivity extends AppCompatActivity {
             return;
         }
 
-        int pembeliId = getCurrentUserId(); // ganti dengan ambil ID user yang sedang login
+        int pembeliId = getCurrentUserId();
         String tanggal = transaksi.getTanggal();
 
-        // Ambil harga produk, pastikan format angka
-        int harga = 0;
+        int harga;
         try {
             String hargaStr = produk.getHarga().replaceAll("[^\\d]", "");
             harga = Integer.parseInt(hargaStr);
@@ -151,11 +150,17 @@ public class PembayaranBerhasilActivity extends AppCompatActivity {
             return;
         }
 
-        // Insert transaksi ke dompet
+        // Update saldo penjual
+        boolean saldoUpdated = dbHelperDompet.tambahSaldo(penjualId, harga);
+        if (!saldoUpdated) {
+            Log.e(TAG, "Gagal menambah saldo penjual");
+        }
+
+        // Insert transaksi ke dompet hanya sekali
         boolean insertSuccess = dbHelperDompet.insertTransaction(penjualId, pembeliId, harga, tanggal);
         if (!insertSuccess) {
             Log.e(TAG, "Gagal insert transaksi ke dompet");
-            Toast.makeText(this, "Gagal menyimpan transaksi dompet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Selamat! Pemesanan Berhasil ", Toast.LENGTH_SHORT).show();
         }
 
         // Display transaction details
@@ -163,9 +168,6 @@ public class PembayaranBerhasilActivity extends AppCompatActivity {
 
         // Update product and transaction status
         updateStatuses(transaksi, produk);
-
-        // Process seller payment
-        processSellerPayment(produk);
 
         // Setup finish button
         setupFinishButton(produk);
@@ -228,38 +230,16 @@ public class PembayaranBerhasilActivity extends AppCompatActivity {
     }
 
     private void updateStatuses(Transaksi transaksi, Produk produk) {
-        // Soft delete product
         if (!dbHelperProduk.hapusProduk(produk.getId())) {
             Log.w(TAG, "Failed to soft delete product");
         }
 
-        // Update transaction status
         if (!dbHelperTransaksi.updateStatusTransaksi(transaksi.getId(), "completed")) {
             Log.w(TAG, "Failed to update transaction status");
         }
     }
 
-    private void processSellerPayment(Produk produk) {
-        try {
-            int idPenjual = Integer.parseInt(produk.getIdPenjual());
-            double hargaProduk = Double.parseDouble(produk.getHarga());
-
-            // Gunakan DatabaseHelperDompet untuk update saldo
-            boolean success = dbHelperDompet.tambahSaldo(idPenjual, hargaProduk);
-
-            if (success) {
-                Log.d(TAG, "Saldo penjual berhasil ditambah");
-                // Catat transaksi
-                dbHelperDompet.insertTransaction(idPenjual, getCurrentUserId(), hargaProduk, getCurrentDate());
-            } else {
-                Log.e(TAG, "Gagal menambah saldo penjual");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error processSellerPayment: " + e.getMessage());
-        }
-    }
-
-    void setupFinishButton(Produk produk) {
+    private void setupFinishButton(Produk produk) {
         ImageView btnSelesai = findViewById(R.id.btnSelesai);
         btnSelesai.setOnClickListener(v -> {
             Intent intent = new Intent(PembayaranBerhasilActivity.this, TransaksiActivity.class);
@@ -278,12 +258,11 @@ public class PembayaranBerhasilActivity extends AppCompatActivity {
         }
     }
 
-    // Contoh dummy, harus diganti dengan session user yang sesungguhnya
+    // Ganti dengan ID user yang sedang login
     private int getCurrentUserId() {
         return 1;
     }
 
-    // Contoh dummy tanggal sekarang
     private String getCurrentDate() {
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(new java.util.Date());

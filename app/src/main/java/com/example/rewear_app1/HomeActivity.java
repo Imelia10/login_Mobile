@@ -83,5 +83,12 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra("user_email", currentUserEmail);
             startActivity(intent);
         });
+
+        LinearLayout cardPengajuanTuta = findViewById(R.id.cardPengajuanTuta);
+        cardPengajuanTuta.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, DaftarPengajuanTuTa.class);
+            intent.putExtra("user_email", currentUserEmail); // kirim email user
+            startActivity(intent);
+        });
     }
 }

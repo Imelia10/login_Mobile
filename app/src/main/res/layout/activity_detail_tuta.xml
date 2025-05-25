@@ -59,38 +59,52 @@
             android:padding="16dp">
 
             <!-- Gambar Produk -->
-            <ImageView
-                android:id="@+id/gambar_produk"
-                android:layout_width="211dp"
-                android:layout_height="208dp"
-                android:layout_gravity="center"
-                android:src="@drawable/dress" />
 
-            <TextView
-                android:id="@+id/nama_produk"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dress"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginTop="8dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
 
-            <TextView
-                android:id="@+id/harga_produk"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rp 50.000"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:layout_marginTop="4dp" />
+                <ImageView
+                    android:id="@+id/imageBarang"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/dress"
+                    android:layout_marginEnd="16dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/nama_produk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dress"
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/harga_produk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 50.000"
+                        android:textSize="16sp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+
 
             <!-- Alamat Pengiriman -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="ALAMAT PENGIRIMAN"
+                android:text="Nama Barang Tukar"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -104,10 +118,10 @@
                 android:layout_marginTop="8dp">
 
                 <EditText
-                    android:id="@+id/alamat_pengiriman"
+                    android:id="@+id/nama_barang_tukar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Rungkut Asri Timur, SBY"
+                    android:text="Barangku"
                     android:focusable="false"
                     android:background="@android:color/transparent"
                     android:textSize="14sp" />
@@ -117,7 +131,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="PILIH METODE PEMBAYARAN"
+                android:text=" METODE PEMBAYARAN"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -215,11 +229,51 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Harga"
+                        android:text="Harga Penawaran"
                         android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/harga_produk_rincian"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 50.000"
+                        android:textSize="14sp" />
+                </LinearLayout>
+        <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Harga Produk "
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/harga_tambah"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 50.000"
+                        android:textSize="14sp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Anda Menambah"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/harga_produk_jual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Rp 50.000"
@@ -323,11 +377,11 @@
 
                 <!-- Tombol Bayar (ImageView) -->
                 <ImageView
-                    android:id="@+id/bayar"
+                    android:id="@+id/lanjut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:src="@drawable/bayar"
+                    android:src="@drawable/lanjut"
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:layout_marginStart="60dp"
