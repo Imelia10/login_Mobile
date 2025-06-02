@@ -181,9 +181,14 @@ public class TambahProdukActivity extends AppCompatActivity {
             return;
         }
 
-        String imageUriString = imageUris.get(0).toString(); // Simpan hanya 1 gambar
+        StringBuilder imageUriString = new StringBuilder();
 
-        long result = dbHelper.tambahProduk(namaBarang, kategori, keterangan, harga, imageUriString, userId);
+        for (Uri imgUri : imageUris) {
+            imageUriString.append(imgUri.toString()).append("\n");
+        }
+//        String imageUriString = imageUris.get(0).toString(); // Simpan hanya 1 gambar
+//        Toast.makeText(this, "Produk berhasil disimpan", Toast.LENGTH_SHORT).show();
+        long result = dbHelper.tambahProduk(namaBarang, kategori, keterangan, harga, imageUriString.toString(), userId);
         if (result != -1) {
             Toast.makeText(this, "Produk berhasil disimpan", Toast.LENGTH_SHORT).show();
 

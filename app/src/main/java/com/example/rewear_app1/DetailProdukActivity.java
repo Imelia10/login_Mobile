@@ -261,13 +261,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.rewear_app1.utils.ImageSliderAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DetailProdukActivity extends AppCompatActivity {
 
     private static final String TAG = "DetailProdukActivity";
     private static final int REQUEST_EDIT_PRODUK = 1;
 
-    private ImageView imageBarang, btnEdit, btnHapus, btnBeli, fotoPenjual, ivKembali;
+//    private ImageView imageBarang,
+    private ViewPager2 imageSlider;
+    private ImageView btnEdit, btnHapus, btnBeli, fotoPenjual, ivKembali;
     private TextView namaBarang, hargaBarang, deskripsiBarang, namaPenjual;
     private String currentUserEmail;
     private Produk produk;
@@ -290,7 +298,8 @@ public class DetailProdukActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        imageBarang = findViewById(R.id.imageBarang);
+//        imageBarang = findViewById(R.id.imageBarang);
+        imageSlider = findViewById(R.id.imageSlider);
         fotoPenjual = findViewById(R.id.fotoPenjual);
         namaBarang = findViewById(R.id.namaBarang);
         hargaBarang = findViewById(R.id.hargaBarang);
@@ -335,16 +344,37 @@ public class DetailProdukActivity extends AppCompatActivity {
         hargaBarang.setText("Rp " + produk.getHarga());
         deskripsiBarang.setText(produk.getDeskripsi());
 
-        if (produk.getGambarUri() != null && !produk.getGambarUri().isEmpty()) {
-            try {
-                imageBarang.setImageURI(Uri.parse(produk.getGambarUri()));
-            } catch (Exception e) {
-                Log.e(TAG, "Error loading product image", e);
-                imageBarang.setImageResource(R.drawable.profil1);
+        String gambarUris = produk.getGambarUri();  // Misalnya "uri1\nuri2\nuri3"
+
+        List<Uri> uriList = new ArrayList<>();
+        if (gambarUris != null && !gambarUris.isEmpty()) {
+            String[] uriArray = gambarUris.split("\n");
+            for (String s : uriArray) {
+                if (!s.trim().isEmpty()) {
+                    uriList.add(Uri.parse(s.trim()));
+                }
             }
-        } else {
-            imageBarang.setImageResource(R.drawable.profil1);
         }
+
+        ImageSliderAdapter adapter = new ImageSliderAdapter(this, uriList);
+        imageSlider.setAdapter(adapter);
+//
+//        if (produk.getGambarUri() != null && !produk.getGambarUri().isEmpty()) {
+//            try {
+//                String[] imgArray = produk.getGambarUri().split("\n");
+//
+//                if (imgArray.length > 0 && !imgArray[0].isEmpty()) {
+//                    imageBarang.setImageURI(Uri.parse(imgArray[0]));
+//                } else {
+//                    imageBarang.setImageResource(R.drawable.profil1);  // default jika kosong
+//                }
+//            } catch (Exception e) {
+//                Log.e(TAG, "Error loading product image", e);
+//                imageBarang.setImageResource(R.drawable.profil1);
+//            }
+//        } else {
+//            imageBarang.setImageResource(R.drawable.profil1);
+//        }
 
         loadSellerInfo();
     }

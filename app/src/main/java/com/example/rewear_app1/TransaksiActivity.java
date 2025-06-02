@@ -162,12 +162,27 @@ public class TransaksiActivity extends AppCompatActivity {
             String uriStr = produk.getGambarUri();
             Log.d("CEK_URI", "Path gambar dari SQLite: " + uriStr);
 
-            try {
-                iv.setImageURI(Uri.parse(uriStr));
-            } catch (Exception e) {
-                iv.setImageResource(R.drawable.profil1);
-                e.printStackTrace();
+
+            String gambarUri = produk.getGambarUri();
+
+            if (gambarUri != null && !gambarUri.isEmpty()) {
+                // Split string berdasarkan \n untuk dapat list gambar
+                String[] gambarArray = gambarUri.split("\n");
+                if (gambarArray.length > 0 && !gambarArray[0].isEmpty()) {
+                    iv.setImageURI(Uri.parse(gambarArray[0]));  // pakai gambar pertama
+                } else {
+                    iv.setImageResource(R.drawable.profil1);  // default jika kosong
+                }
+            } else {
+                iv.setImageResource(R.drawable.profil1);  // default jika null atau kosong
             }
+
+//            try {
+//                iv.setImageURI(Uri.parse(uriStr));
+//            } catch (Exception e) {
+//                iv.setImageResource(R.drawable.profil1);
+//                e.printStackTrace();
+//            }
 
             iv.setOnClickListener(v -> {
                 Intent intent = new Intent(TransaksiActivity.this, DetailProdukActivity.class);
@@ -198,6 +213,11 @@ public class TransaksiActivity extends AppCompatActivity {
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tampilkanProduk(searchView.getQuery().toString(), kategoriAktif);
     }
 
 }

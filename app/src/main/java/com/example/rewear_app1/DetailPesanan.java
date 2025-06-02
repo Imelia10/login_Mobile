@@ -4,13 +4,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import java.io.File;
 
 public class DetailPesanan extends AppCompatActivity {
+
+    private static final String TAG = "DetailPesanan";
 
     private ImageView backIcon, btnBatal, btnBayar, gambarProduk;
     private TextView namaProduk, hargaProduk, alamatPengiriman, metodePembayaran,
@@ -28,9 +33,7 @@ public class DetailPesanan extends AppCompatActivity {
         setContentView(R.layout.activity_detail_pesanan);
 
         initViews();
-        dbHelperProduk = new DatabaseHelperProduk(this);
-        dbHelperTransaksi = new DatabaseHelperTransaksi(this);
-        dbHelperUser = new DatabaseHelper(this);
+        initDatabaseHelpers();
         getCurrentUserEmail();
         loadData();
         setupButtons();
@@ -53,9 +56,19 @@ public class DetailPesanan extends AppCompatActivity {
         hargaProdukRincian = findViewById(R.id.harga_produk_rincian);
     }
 
+    private void initDatabaseHelpers() {
+        dbHelperProduk = new DatabaseHelperProduk(this);
+        dbHelperTransaksi = new DatabaseHelperTransaksi(this);
+        dbHelperUser = new DatabaseHelper(this);
+    }
+
     private void getCurrentUserEmail() {
         SharedPreferences preferences = getSharedPreferences("user_session", MODE_PRIVATE);
         currentUserEmail = preferences.getString("email", "");
+        if (currentUserEmail.isEmpty()) {
+            Toast.makeText(this, "Silakan login kembali", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void loadData() {
@@ -77,17 +90,10 @@ public class DetailPesanan extends AppCompatActivity {
                 return;
             }
 
-            if (gambarUri != null && !gambarUri.isEmpty()) {
-                try {
-                    gambarProduk.setImageURI(Uri.parse(gambarUri));
-                } catch (Exception e) {
-                    gambarProduk.setImageResource(R.drawable.profil1);
-                }
-            } else {
-                gambarProduk.setImageResource(R.drawable.profil1);
-            }
+            // Load product image
+            loadProductImage(gambarUri != null ? gambarUri : produk.getGambarUri());
 
-            // Set transaksi dengan diskon 0
+            // Initialize transaction
             transaksi = new Transaksi();
             transaksi.setIdProduk(produkId);
             transaksi.setEmailPembeli(currentUserEmail);
@@ -95,7 +101,7 @@ public class DetailPesanan extends AppCompatActivity {
             transaksi.setAlamat(currentUser.getAlamat());
             transaksi.setMetodePembayaran("COD");
             transaksi.setOngkir(15000);
-            transaksi.setDiskon(0); // Diskon di-set 0
+            transaksi.setDiskon(0);
             transaksi.setTotal(Double.parseDouble(produk.getHarga()) + transaksi.getOngkir());
         } else {
             transaksi = dbHelperTransaksi.getTransaksiTerakhir(currentUserEmail);
@@ -112,36 +118,65 @@ public class DetailPesanan extends AppCompatActivity {
                 return;
             }
 
-            if (produk.getGambarUri() != null && !produk.getGambarUri().isEmpty()) {
-                try {
-                    gambarProduk.setImageURI(Uri.parse(produk.getGambarUri()));
-                } catch (Exception e) {
-                    gambarProduk.setImageResource(R.drawable.profil1);
-                }
-            } else {
-                gambarProduk.setImageResource(R.drawable.profil1);
-            }
+            // Load product image
+            loadProductImage(produk.getGambarUri());
         }
 
         displayData();
     }
 
+    private void loadProductImage(String imageUris) {
+        if (imageUris == null || imageUris.isEmpty()) {
+            gambarProduk.setImageResource(R.drawable.profil1);
+            return;
+        }
+
+        try {
+            // Take the first image if multiple exist
+            String firstImageUri = imageUris.split("\n")[0].trim();
+            Uri uri = Uri.parse(firstImageUri);
+
+            // Check if URI is from file provider
+            if (uri.getScheme() != null && uri.getScheme().equals("content")) {
+                // Handle content URIs (from FileProvider)
+                gambarProduk.setImageURI(uri);
+            } else if (uri.getScheme() != null && uri.getScheme().equals("file")) {
+                // Handle file URIs
+                File file = new File(uri.getPath());
+                Uri fileUri = FileProvider.getUriForFile(
+                        this,
+                        getPackageName() + ".fileprovider",
+                        file
+                );
+                gambarProduk.setImageURI(fileUri);
+            } else {
+                // Handle other URIs (http, https, etc.)
+                gambarProduk.setImageURI(uri);
+            }
+
+            Log.d(TAG, "Successfully loaded image: " + uri.toString());
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading product image", e);
+            gambarProduk.setImageResource(R.drawable.profil1);
+        }
+    }
+
     private void displayData() {
-        // Tampilkan data produk
+        // Display product data
         namaProduk.setText(produk.getNama());
         hargaProduk.setText(formatRupiah(Double.parseDouble(produk.getHarga())));
         hargaProdukRincian.setText(formatRupiah(Double.parseDouble(produk.getHarga())));
 
-        // Tampilkan info pengiriman
+        // Display shipping info
         alamatPengiriman.setText(transaksi.getAlamat());
         metodePembayaran.setText(transaksi.getMetodePembayaran());
         tanggalPesanan.setText(transaksi.getTanggal());
 
-        // Tampilkan ongkir dan diskon (0)
+        // Display shipping cost and discount
         ongkir.setText(formatRupiah(transaksi.getOngkir()));
-        discount.setText(formatRupiah(0)); // Selalu tampilkan Rp 0
+        discount.setText(formatRupiah(0));
 
-        // Hitung total: harga produk + ongkir
+        // Calculate total
         double total = Double.parseDouble(produk.getHarga()) + transaksi.getOngkir();
         totalHarga.setText(formatRupiah(total));
     }
@@ -151,8 +186,8 @@ public class DetailPesanan extends AppCompatActivity {
     }
 
     private String getCurrentDate() {
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMMM yyyy", java.util.Locale.getDefault());
-        return sdf.format(new java.util.Date());
+        return new java.text.SimpleDateFormat("dd MMMM yyyy", java.util.Locale.getDefault())
+                .format(new java.util.Date());
     }
 
     private void setupButtons() {
@@ -173,21 +208,22 @@ public class DetailPesanan extends AppCompatActivity {
                 long id = dbHelperTransaksi.addTransaksi(transaksi);
                 if (id != -1) {
                     transaksi.setId((int) id);
-                    Toast.makeText(this, "Pembayaran berhasil", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(this, PembayaranBerhasilActivity.class);
-                    intent.putExtra("transaksi_id", transaksi.getId());
-                    startActivity(intent);
-                    finish();
+                    showPaymentSuccess();
+                } else {
+                    Toast.makeText(this, "Gagal memproses pembayaran", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(this, "Pembayaran berhasil", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, PembayaranBerhasilActivity.class);
-                intent.putExtra("transaksi_id", transaksi.getId());
-                startActivity(intent);
-                finish();
+                showPaymentSuccess();
             }
         });
+    }
+
+    private void showPaymentSuccess() {
+        Toast.makeText(this, "Pembayaran berhasil", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, PembayaranBerhasilActivity.class);
+        intent.putExtra("transaksi_id", transaksi.getId());
+        startActivity(intent);
+        finish();
     }
 
     @Override

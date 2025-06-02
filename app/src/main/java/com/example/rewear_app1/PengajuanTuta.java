@@ -11,12 +11,14 @@
         private String gambarUri;
         private String emailPengaju;
         private String emailPemilik;
+        private  String gambar_tuta;
+        private  String status;
 
         public PengajuanTuta() {}
 
         public PengajuanTuta(int id, int produkId, String namaProduk, String namaBarangTukar,
                              String hargaTukar, String metodePembayaran, String tanggal,
-                             String gambarUri, String emailPengaju, String emailPemilik) {
+                             String gambarUri, String emailPengaju, String emailPemilik, String gambar_tuta, String status) {
             this.id = id;
             this.produkId = produkId;
             this.namaProduk = namaProduk;
@@ -27,6 +29,8 @@
             this.gambarUri = gambarUri;
             this.emailPengaju = emailPengaju;
             this.emailPemilik = emailPemilik;
+            this.gambar_tuta = gambar_tuta;
+            this.status = status;
         }
 
 
@@ -108,6 +112,19 @@
         public void setEmailPemilik(String emailPemilik) {
             this.emailPemilik = emailPemilik;
         }
+        public String getGambar_tuta() {
+            return gambar_tuta;
+        }
 
+        public void setGambar_tuta(String gambarTuta) {
+            this.gambar_tuta = gambarTuta;
+        }
 
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }

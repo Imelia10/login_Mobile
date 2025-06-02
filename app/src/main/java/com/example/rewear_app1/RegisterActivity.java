@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.rewear_app1.presentation.login.view.LoginActivity;
+
 import java.util.Calendar;
 
 public class RegisterActivity extends AppCompatActivity {

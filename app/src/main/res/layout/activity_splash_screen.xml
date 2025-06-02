@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".presentation.splash.view.SplashScreenActivity">
+
+        <ImageView
+            android:id="@+id/ivSplash1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/splash1"
+            android:visibility="visible"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/ivIconApp"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_centerInParent="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/iconapp"
+            android:visibility="gone"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/ivSplash2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/splash2"
+            android:visibility="gone"
+            android:scaleType="centerCrop" />
+    </RelativeLayout>

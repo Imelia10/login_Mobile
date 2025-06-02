@@ -1,14 +1,18 @@
 package com.example.rewear_app1;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Calendar;
 
 public class EditUserActivity extends AppCompatActivity {
 
@@ -16,12 +20,12 @@ public class EditUserActivity extends AppCompatActivity {
     private ImageView imageViewProfile;
     private Button btnSelectPhoto, btnSave;
     private int id;
-    private Uri selectedPhotoUri; // Variabel untuk menyimpan URI foto yang dipilih
+    private Uri selectedPhotoUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_user); // Pastikan layout XML ini ada
+        setContentView(R.layout.activity_edit_user);
 
         // Inisialisasi komponen
         editFirstName = findViewById(R.id.editFirstName);
@@ -34,7 +38,7 @@ public class EditUserActivity extends AppCompatActivity {
 
         // Ambil data dari Intent
         Intent intent = getIntent();
-        id = intent.getIntExtra("USER_ID", -1); // Ambil ID pengguna
+        id = intent.getIntExtra("USER_ID", -1);
         editFirstName.setText(intent.getStringExtra("firstName"));
         editLastName.setText(intent.getStringExtra("lastName"));
         editPhone.setText(intent.getStringExtra("phone"));
@@ -44,35 +48,49 @@ public class EditUserActivity extends AppCompatActivity {
             imageViewProfile.setImageURI(Uri.parse(photoUri));
         }
 
-        // Pilih foto
+        // Pilih foto dari galeri
         btnSelectPhoto.setOnClickListener(v -> {
-            // Intent untuk memilih gambar dari galeri
             Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(pickPhoto, 1); // 1 adalah request code untuk memilih foto
+            startActivityForResult(pickPhoto, 1);
         });
+
+        // Tampilkan DatePicker saat klik TTL
+        editTtl.setOnClickListener(v -> showDatePicker());
 
         // Simpan perubahan
         btnSave.setOnClickListener(v -> {
-            // Ambil data baru dari EditText
             String firstName = editFirstName.getText().toString();
             String lastName = editLastName.getText().toString();
             String phone = editPhone.getText().toString();
             String ttl = editTtl.getText().toString();
-
-            // Gunakan URI foto yang dipilih, atau URI lama jika tidak ada foto baru
             String photoUriToUpdate = selectedPhotoUri != null ? selectedPhotoUri.toString() : intent.getStringExtra("photoUri");
 
-            // Update data ke database
             DatabaseHelper dbHelper = new DatabaseHelper(EditUserActivity.this);
             boolean isUpdated = dbHelper.updateUser(id, firstName, lastName, phone, ttl, photoUriToUpdate);
 
             if (isUpdated) {
                 Toast.makeText(EditUserActivity.this, "Data berhasil diperbarui", Toast.LENGTH_SHORT).show();
-                finish(); // Kembali ke halaman AdminUserActivity
+                finish();
             } else {
                 Toast.makeText(EditUserActivity.this, "Gagal memperbarui data", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // Fungsi menampilkan DatePickerDialog
+    private void showDatePicker() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(EditUserActivity.this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    String date = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear);
+                    editTtl.setText(date);
+                }, year, month, day);
+
+        datePickerDialog.show();
     }
 
     // Menangani hasil foto yang dipilih
@@ -80,8 +98,8 @@ public class EditUserActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 1) {
-            selectedPhotoUri = data.getData(); // Ambil URI foto yang dipilih
-            imageViewProfile.setImageURI(selectedPhotoUri); // Tampilkan foto yang dipilih di ImageView
+            selectedPhotoUri = data.getData();
+            imageViewProfile.setImageURI(selectedPhotoUri);
         }
     }
 }

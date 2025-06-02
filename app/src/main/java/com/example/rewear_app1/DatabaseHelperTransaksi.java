@@ -62,43 +62,78 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
     public long addTransaksi(Transaksi transaksi) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("id_produk", transaksi.getIdProduk());
-        values.put("email_pembeli", transaksi.getEmailPembeli());
-        values.put("tanggal", transaksi.getTanggal());
-        values.put("alamat", transaksi.getAlamat());
-        values.put("metode_pembayaran", transaksi.getMetodePembayaran());
-        values.put("ongkir", transaksi.getOngkir());
-        values.put("diskon", transaksi.getDiskon());
-        values.put("total", transaksi.getTotal());
+        values.put(COLUMN_ID_PEMBELI, transaksi.getIdPembeli());
+        values.put(COLUMN_ID_PRODUK, transaksi.getIdProduk());
+        values.put(COLUMN_EMAIL_PEMBELI, transaksi.getEmailPembeli());
+        values.put(COLUMN_NAMA_BARANG, transaksi.getNamaBarang());
+        values.put(COLUMN_TANGGAL, transaksi.getTanggal());
+        values.put(COLUMN_ALAMAT, transaksi.getAlamat());
+        values.put(COLUMN_METODE_PEMBAYARAN, transaksi.getMetodePembayaran());
+        values.put(COLUMN_ONGKIR, transaksi.getOngkir());
+        values.put(COLUMN_DISKON, transaksi.getDiskon());
+        values.put(COLUMN_TOTAL, transaksi.getTotal());
+        values.put(COLUMN_STATUS, transaksi.getStatus() != null ? transaksi.getStatus() : "pending");
 
-        long id = db.insert("transaksi", null, values);
+        long id = db.insert(TABLE_TRANSAKSI, null, values);
         db.close();
         return id;
     }
+
 
     public List<Transaksi> getAllTransaksi() {
         List<Transaksi> transaksiList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM transaksi", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TRANSAKSI, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 Transaksi transaksi = new Transaksi();
-                transaksi.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                transaksi.setIdProduk(cursor.getInt(cursor.getColumnIndexOrThrow("id_produk")));
-                transaksi.setEmailUser(cursor.getString(cursor.getColumnIndexOrThrow("email_user")));
-                transaksi.setTanggal(cursor.getString(cursor.getColumnIndexOrThrow("tanggal")));
-                transaksi.setTotal(cursor.getDouble(cursor.getColumnIndexOrThrow("total")));
-                transaksi.setIdUser(cursor.getInt(cursor.getColumnIndexOrThrow("id_user"))); // Pastikan kolom ini ada
+                transaksi.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+                transaksi.setIdProduk(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID_PRODUK)));
+                transaksi.setEmailPembeli(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL_PEMBELI)));
+                transaksi.setIdPembeli(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID_PEMBELI)));
+                transaksi.setNamaBarang(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAMA_BARANG)));
+                transaksi.setTanggal(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TANGGAL)));
+                transaksi.setAlamat(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT)));
+                transaksi.setMetodePembayaran(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_METODE_PEMBAYARAN)));
+                transaksi.setOngkir(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_ONGKIR)));
+                transaksi.setDiskon(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_DISKON)));
+                transaksi.setTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_TOTAL)));
+                transaksi.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS)));
                 transaksiList.add(transaksi);
             } while (cursor.moveToNext());
 
             cursor.close();
         }
-
+        db.close();
         return transaksiList;
     }
 
+    public int getJumlahTransaksiUser(String userEmail) {
+        int count = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT COUNT(*) as count FROM " + TABLE_TRANSAKSI +
+                " WHERE " + COLUMN_EMAIL_PEMBELI + " = ? AND " + COLUMN_STATUS + " = 'completed'";
+        Cursor cursor = db.rawQuery(query, new String[]{userEmail});
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
+        }
+        cursor.close();
+        return count;
+    }
+
+    public double getTotalBelanjaUser(String userEmail) {
+        double total = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT SUM(" + COLUMN_TOTAL + ") as total FROM " + TABLE_TRANSAKSI +
+                " WHERE " + COLUMN_EMAIL_PEMBELI + " = ? AND " + COLUMN_STATUS + " = 'completed'";
+        Cursor cursor = db.rawQuery(query, new String[]{userEmail});
+        if (cursor.moveToFirst()) {
+            total = cursor.getDouble(cursor.getColumnIndexOrThrow("total"));
+        }
+        cursor.close();
+        return total;
+    }
 
 
     // Mendapatkan transaksi berdasarkan id
@@ -248,8 +283,8 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
     // Mendapatkan semua transaksi user tertentu berdasarkan email pembeli
     public List<Transaksi> getAllTransaksiUser(String emailPembeli) {
         List<Transaksi> transaksiList = new ArrayList<>();
-
         SQLiteDatabase db = this.getReadableDatabase();
+
         Cursor cursor = db.query(TABLE_TRANSAKSI,
                 null,
                 COLUMN_EMAIL_PEMBELI + " = ?",
@@ -281,14 +316,20 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
         return transaksiList;
     }
 
+
     // Update status transaksi berdasarkan id
     public boolean updateStatusTransaksi(int transaksiId, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("status", status);
-        int rowsAffected = db.update("transaksi", values, "id=?", new String[]{String.valueOf(transaksiId)});
+        values.put(COLUMN_STATUS, status);
+
+        int rowsAffected = db.update(TABLE_TRANSAKSI, values,
+                COLUMN_ID + " = ?",
+                new String[]{String.valueOf(transaksiId)});
+        db.close();
         return rowsAffected > 0;
     }
+
 
 
     // Hapus transaksi berdasarkan id

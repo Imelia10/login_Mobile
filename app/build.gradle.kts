@@ -30,6 +30,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -41,6 +45,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // ViewModel dan LiveData (Android Jetpack)
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime:2.7.0")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
 
     // Jika kamu menggunakan ViewPager2 atau pustaka yang lebih baru, kamu bisa menambahkan:
     // implementation("androidx.viewpager2:viewpager2:1.0.0")

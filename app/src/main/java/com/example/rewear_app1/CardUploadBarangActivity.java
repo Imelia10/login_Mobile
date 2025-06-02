@@ -143,10 +143,19 @@ public class CardUploadBarangActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(120)));
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            if (produk.getGambarUri() != null && !produk.getGambarUri().isEmpty()) {
-                iv.setImageURI(Uri.parse(produk.getGambarUri()));
+            // ambil hanya gambar awal saja
+            String gambarUri = produk.getGambarUri();
+
+            if (gambarUri != null && !gambarUri.isEmpty()) {
+                // Split string berdasarkan \n untuk dapat list gambar
+                String[] gambarArray = gambarUri.split("\n");
+                if (gambarArray.length > 0 && !gambarArray[0].isEmpty()) {
+                    iv.setImageURI(Uri.parse(gambarArray[0]));  // pakai gambar pertama
+                } else {
+                    iv.setImageResource(R.drawable.profil1);  // default jika kosong
+                }
             } else {
-                iv.setImageResource(R.drawable.profil1);  // Gambar default
+                iv.setImageResource(R.drawable.profil1);  // default jika null atau kosong
             }
 
             iv.setOnClickListener(v -> {
@@ -177,5 +186,10 @@ public class CardUploadBarangActivity extends AppCompatActivity {
 
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tampilkanProduk(searchView.getQuery().toString(), kategoriAktif);
     }
 }

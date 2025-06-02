@@ -1,23 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.rewear_app1">
-
     <!-- Izin untuk akses internet dan penyimpanan -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-
-
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.ReWear_app1"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:theme="@style/Theme.ReWear_app1">
+        <activity
+            android:name=".presentation.splash.view.SplashScreenActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!-- Provider untuk akses file -->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -27,23 +34,27 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
-
-        <!-- Activity Login sebagai launcher -->
-        <activity android:name=".LoginActivity"
+        </provider> <!-- Activity Login sebagai launcher -->
+        <activity
+            android:name=".presentation.login.view.LoginActivity"
+            android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ReWear_app1"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.ReWear_app1">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-        <!-- Activity lainnya -->
-        <activity android:name=".RegisterActivity" android:exported="false" />
-        <activity android:name=".HomeActivity" android:exported="true" />
-        <activity android:name=".ProfilActivity" android:exported="false" />
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity> <!-- Activity lainnya -->
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HomeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ProfilActivity"
+            android:exported="false" />
         <activity android:name=".AdminActivity" />
         <activity android:name=".AdminUserActivity" />
         <activity android:name=".AddUserActivity" />
@@ -54,16 +65,16 @@
         <activity android:name=".TambahProdukActivity" />
         <activity android:name=".DetailProdukActivity" />
         <activity android:name=".CardUploadBarangActivity" />
-        <activity android:name=".EditProdukActivity"/>
-        <activity android:name=".DetailPesanan"/>
-        <activity android:name=".HistoryActivity"/>
+        <activity android:name=".EditProdukActivity" />
+        <activity android:name=".DetailPesanan" />
+        <activity android:name=".HistoryActivity" />
         <activity android:name=".PembayaranBerhasilActivity" />
         <activity android:name=".DompetActivity" />
         <activity android:name=".DetailTukarTambahActivity" />
         <activity android:name=".AjukanBarangActivity" />
         <activity android:name=".DaftarPengajuanTuTa" />
-
-
+        <activity android:name=".AdminVoucherActivity" />
+        <activity android:name=".VoucherActivity" />
     </application>
 
 </manifest>

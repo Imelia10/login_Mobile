@@ -250,7 +250,7 @@ public class KelolaEdukasiActivity extends AppCompatActivity {
         ImageButton btnHapus = new ImageButton(this);
         btnHapus.setImageResource(R.drawable.hapus);
         btnHapus.setBackgroundResource(android.R.color.transparent);
-        btnHapus.setLayoutParams(new LinearLayout.LayoutParams(60, 60));
+        btnHapus.setLayoutParams(new LinearLayout.LayoutParams(120, 85));
         btnHapus.setOnClickListener(v -> showDeleteConfirmationDialog(id, artikelItem));
 
         buttonLayout.addView(btnEdit);

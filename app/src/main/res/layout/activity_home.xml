@@ -40,19 +40,21 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/chat"
-                    android:layout_width="33dp"
+                    android:id="@+id/ivChat"
+                    android:layout_width="55dp"
                     android:layout_height="35dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:src="@drawable/chat" />
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="-1dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/logout" />
             </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:layout_marginTop="4dp"
                 android:text="Selamat Datang di ReWear!"
                 android:textColor="#666666"
                 android:textSize="16sp" />
@@ -191,6 +193,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
+        android:layout_marginRight="255dp"
         android:layout_width="72dp"
         android:layout_height="70dp"
         android:layout_gravity="bottom|center"
@@ -205,57 +208,57 @@
             android:layout_width="58dp"
             android:layout_height="48dp"
             android:layout_marginBottom="5dp"
-            android:src="@drawable/logo"
+            android:src="@drawable/home"
             android:layout_gravity="center" />
 
     </FrameLayout>
 
-    <!-- Ikon navigasi tambahan -->
-    <ImageView
-        android:id="@+id/icon_dompet"
-        android:layout_width="48dp"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="90dp"
-        android:layout_marginBottom="5dp"
-        android:clickable="true"
-        android:elevation="20dp"
-        android:focusable="true"
-        android:src="@drawable/uang1" />
+<!--    &lt;!&ndash; Ikon navigasi tambahan &ndash;&gt;-->
+<!--    <ImageView-->
+<!--        android:id="@+id/icon_dompet"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_marginEnd="90dp"-->
+<!--        android:layout_marginBottom="5dp"-->
+<!--        android:clickable="true"-->
+<!--        android:elevation="20dp"-->
+<!--        android:focusable="true"-->
+<!--        android:src="@drawable/uang1" />-->
 
     <ImageView
         android:id="@+id/profil1"
-        android:layout_width="55dp"
-        android:layout_height="58dp"
+        android:layout_width="78dp"
+        android:layout_height="54dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="9dp"
         android:clickable="true"
         android:elevation="20dp"
         android:focusable="true"
-        android:src="@drawable/profil2" />
+        android:src="@drawable/t_profil" />
 
     <ImageView
         android:id="@+id/cardHistory"
-        android:layout_width="56dp"
-        android:layout_height="50dp"
+        android:layout_width="90dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="270dp"
+        android:layout_marginEnd="90dp"
         android:layout_marginBottom="11dp"
         android:clickable="true"
         android:elevation="20dp"
         android:focusable="true"
-        android:src="@drawable/history" />
+        android:src="@drawable/t_history" />
     <ImageView
-        android:layout_width="56dp"
-        android:layout_height="50dp"
+        android:id="@+id/voucher"
+        android:layout_width="75dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="340dp"
-        android:layout_marginBottom="11dp"
+        android:layout_marginEnd="185dp"
         android:clickable="true"
         android:elevation="20dp"
         android:focusable="true"
-        android:src="@drawable/vchr" />
+        android:src="@drawable/t_voucher" />
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

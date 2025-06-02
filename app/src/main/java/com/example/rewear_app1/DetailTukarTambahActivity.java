@@ -24,11 +24,12 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
     private EditText namaBarangTukar, metodePembayaran;
 
     private DatabaseHelperProduk dbHelperProduk;
+    private DatabaseHelper dbHelperPenjual;
     private int produkId = -1;
     private Produk produk;
 
-    private String namaBarangTukarStr, hargaTukarStr, keteranganTukar;
-    private ArrayList<Uri> gambarTerpilih;
+    private String namaBarangTukarStr, hargaTukarStr, keteranganTukar, gambarUriTukar, gambarUriJual ;
+//    private ArrayList<Uri> gambarTerpilih;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,8 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_tuta);
 
         dbHelperProduk = new DatabaseHelperProduk(this);
+
+        dbHelperPenjual = new DatabaseHelper(this);
 
         initViews();
         getIntentData();
@@ -73,19 +76,23 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
         namaBarangTukarStr = intent.getStringExtra("nama_barang_tukar");
         hargaTukarStr = intent.getStringExtra("harga_tukar");
         keteranganTukar = intent.getStringExtra("keterangan_tukar");
+        gambarUriTukar = intent.getStringExtra("gambarTuta");
+
+        gambarUriJual = intent.getStringExtra("gambarJual");
 
         // Handle gambar yang dikirim sebagai ArrayList<String>
-        ArrayList<String> uriStrings = intent.getStringArrayListExtra("gambar_terpilih");
-        gambarTerpilih = new ArrayList<>();
-        if (uriStrings != null) {
-            for (String uriString : uriStrings) {
-                gambarTerpilih.add(Uri.parse(uriString));
-            }
-        }
+//        ArrayList<String> uriStrings = intent.getStringArrayListExtra("gambar_terpilih");
+//        gambarTerpilih = new ArrayList<>();
+//        if (uriStrings != null) {
+//            for (String uriString : uriStrings) {
+//                gambarTerpilih.add(Uri.parse(uriString));
+//            }
+//        }
     }
 
     private void loadProductData() {
         produk = dbHelperProduk.getProdukById(produkId);
+
         if (produk == null) {
             Toast.makeText(this, "Data produk tidak ditemukan", Toast.LENGTH_SHORT).show();
             finish();
@@ -103,10 +110,17 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
         }
 
         // Harga produk asli
-        hargaProduk.setText(formatRupiah(produk.getHarga()));
+//        hargaProduk.setText(formatRupiah(produk.getHarga()));
+        hargaProduk.setText(formatRupiah(hargaTukarStr));
 
         // Gambar produk
         try {
+            if (gambarUriTukar != null && !gambarUriTukar.isEmpty()) {
+                imageBarang.setImageURI(Uri.parse(gambarUriTukar));
+            } else {
+                imageBarang.setImageResource(R.drawable.dress);
+            }
+            /*
             if (gambarTerpilih != null && !gambarTerpilih.isEmpty()) {
                 imageBarang.setImageURI(gambarTerpilih.get(0));
             } else if (produk.getGambarUri() != null && !produk.getGambarUri().isEmpty()) {
@@ -114,6 +128,7 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
             } else {
                 imageBarang.setImageResource(R.drawable.dress);
             }
+            */
         } catch (Exception e) {
             imageBarang.setImageResource(R.drawable.dress);
         }
@@ -180,14 +195,26 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
         String hargaTukarFinal = hargaTukarStr != null ? hargaTukarStr : "0";
 
         // Ambil URI gambar dari database
-        String gambarUriStr = saveImagesToStorage(gambarTerpilih);
+//        String gambarTuta = gambarUriTukar;
+//        String gambarUriTerpilih = saveImagesToStorage(gambarTerpilih);
+
+        ArrayList<Uri> uriListJual = new ArrayList<>();
+        uriListJual.add(Uri.parse(gambarUriJual.trim()));
+        String outGambarJual = saveImagesToStorage(uriListJual);
+
+        ArrayList<Uri> uriListTukar = new ArrayList<>();
+        uriListTukar.add(Uri.parse(gambarUriTukar.trim()));
+        String outGambarTukar = saveImagesToStorage(uriListTukar);
 
 
         SharedPreferences sp = getSharedPreferences("user_session", MODE_PRIVATE);
         String emailPengaju = sp.getString("email_login", "");
-        String emailPemilik = produk != null ? produk.getIdPenjual() : "";
+        String idPenjual = produk != null ? produk.getIdPenjual() : "";
 
-        if (emailPengaju.isEmpty() || emailPemilik.isEmpty()) {
+        // get data penjual
+        var userPenjual = dbHelperPenjual.getUserById(Integer.parseInt(idPenjual));
+
+        if (emailPengaju.isEmpty() || userPenjual == null) {
             Toast.makeText(this, "Data email tidak valid", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -200,14 +227,16 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
                 hargaTukarFinal,
                 metodeBayar,
                 tanggal,
-                gambarUriStr,
+                outGambarJual,
                 emailPengaju,
-                emailPemilik
+                userPenjual.getEmail(),
+                outGambarTukar
+
         );
 
         Log.d("PengajuanTuta", "Insert result: " + sukses +
                 ", EmailPengaju: " + emailPengaju +
-                ", EmailPemilik: " + emailPemilik);
+                ", EmailPemilik: " + userPenjual.getEmail());
 
         if (sukses) {
             Toast.makeText(this, "Pengajuan berhasil dikirim", Toast.LENGTH_SHORT).show();

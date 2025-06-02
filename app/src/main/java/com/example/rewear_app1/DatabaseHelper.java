@@ -12,8 +12,9 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ReWear.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 13; // Incremented from 11
 
+    // Users table constants
     private static final String TABLE_NAME = "users";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_PHONE = "phone";
@@ -24,8 +25,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_ALAMAT = "alamat";
     private static final String COLUMN_TTL = "ttl";
     private static final String COLUMN_PHOTO_URI = "photoUri";
-    private static final String COLUMN_SALDO = "saldo";  // tambah kolom saldo
+    private static final String COLUMN_SALDO = "saldo";
 
+    // Voucher table constants
+    private static final String TABLE_VOUCHER = "voucher";
+    private static final String COLUMN_VOUCHER_ID = "id";
+    private static final String COLUMN_VOUCHER_JUDUL = "judul";
+    private static final String COLUMN_VOUCHER_SYARAT = "syarat";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,7 +39,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
+        // Create users table
+        String createUserTable = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
                 COLUMN_PHONE + " TEXT UNIQUE, " +
                 COLUMN_FIRST_NAME + " TEXT, " +
@@ -45,15 +52,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_PHOTO_URI + " TEXT, " +
                 COLUMN_SALDO + " DOUBLE DEFAULT 0" +
                 ")";
-        db.execSQL(createTable);
-    }
+        db.execSQL(createUserTable);
 
+        // Create voucher table
+        String createVoucherTable = "CREATE TABLE " + TABLE_VOUCHER + " (" +
+                COLUMN_VOUCHER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_VOUCHER_JUDUL + " TEXT, " +
+                COLUMN_VOUCHER_SYARAT + " TEXT, " +
+                "kode TEXT" + // Tambahkan ini
+                ")";
+        db.execSQL(createVoucherTable);
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VOUCHER);
         onCreate(db);
     }
+
+
 
     private int getNextAvailableId(SQLiteDatabase db) {
         int id = 1;
@@ -80,7 +98,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return 0;
     }
 
-
     public int getIdPenjualDariProduk(int produkId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT idPenjual FROM produk WHERE id = ?", new String[]{String.valueOf(produkId)});
@@ -93,11 +110,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return -1; // Tidak ditemukan
     }
 
-
     public boolean tambahSaldoUser(int userId, int jumlahSaldo) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // Ambil saldo saat ini
         Cursor cursor = db.rawQuery("SELECT saldo FROM users WHERE id = ?", new String[]{String.valueOf(userId)});
         if (cursor.moveToFirst()) {
             int saldoSekarang = cursor.getInt(0);
@@ -113,8 +128,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
-
-
+    public boolean deleteVoucher(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete(TABLE_VOUCHER, COLUMN_VOUCHER_ID + " = ?", new String[]{String.valueOf(id)});
+        return rowsAffected > 0;
+    }
 
     public boolean registerUser(String phone, String firstName, String lastName, String email, String password, String alamat, String ttl, String photoUri) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -263,8 +281,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    // ===== Saldo Methods =====
-
     public double getSaldo(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT " + COLUMN_SALDO + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = ?", new String[]{String.valueOf(userId)});
@@ -277,7 +293,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return saldo;
     }
 
+    public boolean insertVoucher(String judul, String syarat) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_VOUCHER_JUDUL, judul);
+        values.put(COLUMN_VOUCHER_SYARAT, syarat);
+        long result = db.insert(TABLE_VOUCHER, null, values);
+        return result != -1;
+    }
 
+    public Cursor getAllVouchers() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_VOUCHER, null);
+    }
 
     public boolean tambahSaldo(int userId, double jumlah) {
         double saldoSekarang = getSaldo(userId);
@@ -291,7 +319,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
-
     public int getUserIdByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
         int userId = -1;
@@ -303,7 +330,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return userId;
     }
-
 
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
@@ -331,271 +357,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return userList;
     }
-
-
 }
-
-
-////
-////
-////package com.example.rewear_app1;
-////
-////import android.content.ContentValues;
-////import android.content.Context;
-////import android.database.Cursor;
-////import android.database.sqlite.SQLiteDatabase;
-////import android.database.sqlite.SQLiteOpenHelper;
-////
-////import java.util.ArrayList;
-////import java.util.List;
-////
-////public class DatabaseHelper extends SQLiteOpenHelper {
-////
-////    private static final String DATABASE_NAME = "ReWear.db";
-////    private static final int DATABASE_VERSION = 9;
-////
-////    private static final String TABLE_NAME = "users";
-////    private static final String COLUMN_ID = "id";
-////    private static final String COLUMN_PHONE = "phone";
-////    private static final String COLUMN_FIRST_NAME = "first_name";
-////    private static final String COLUMN_LAST_NAME = "last_name";
-////    private static final String COLUMN_EMAIL = "email";
-////    private static final String COLUMN_PASSWORD = "password";
-////    private static final String COLUMN_ALAMAT = "alamat";
-////    private static final String COLUMN_TTL = "ttl";
-////    private static final String COLUMN_PHOTO_URI = "photoUri";
-////    private static final String COLUMN_SALDO = "saldo";  // tambah kolom saldo
-////
-////    public DatabaseHelper(Context context) {
-////        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-////    }
-////
-////    @Override
-////    public void onCreate(SQLiteDatabase db) {
-////        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
-////                COLUMN_ID + " INTEGER PRIMARY KEY, " +  // pakai AUTOINCREMENT
-////                COLUMN_PHONE + " TEXT UNIQUE, " +
-////                COLUMN_FIRST_NAME + " TEXT, " +
-////                COLUMN_LAST_NAME + " TEXT, " +
-////                COLUMN_EMAIL + " TEXT, " +
-////                COLUMN_PASSWORD + " TEXT, " +
-////                COLUMN_ALAMAT + " TEXT, " +
-////                COLUMN_TTL + " TEXT, " +
-////                COLUMN_PHOTO_URI + " TEXT, " +
-////                COLUMN_SALDO + " INTEGER DEFAULT 0)";
-////        db.execSQL(createTable);
-////    }
-////
-////    @Override
-////    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-////        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-////        onCreate(db);
-////    }
-////
-////    // Tidak perlu getNextAvailableId karena AUTOINCREMENT
-////
-////    public int getSaldoUser(int userId) {
-////        SQLiteDatabase db = this.getReadableDatabase();
-////        Cursor cursor = db.rawQuery("SELECT " + COLUMN_SALDO + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = ?", new String[]{String.valueOf(userId)});
-////        int saldo = 0;
-////        if (cursor.moveToFirst()) {
-////            saldo = cursor.getInt(0);
-////        }
-////        cursor.close();
-////        db.close();
-////        return saldo;
-////    }
-////
-////    public int getIdPenjualDariProduk(int produkId) {
-////        SQLiteDatabase db = this.getReadableDatabase();
-////        Cursor cursor = db.rawQuery("SELECT idPenjual FROM produk WHERE id = ?", new String[]{String.valueOf(produkId)});
-////        if (cursor.moveToFirst()) {
-////            int idPenjual = cursor.getInt(0);
-////            cursor.close();
-////            return idPenjual;
-////        }
-////        cursor.close();
-////        return -1; // Tidak ditemukan
-////    }
-////
-////    public boolean tambahSaldoUser(int userId, int jumlahSaldo) {
-////        SQLiteDatabase db = this.getWritableDatabase();
-////
-////        Cursor cursor = db.rawQuery("SELECT " + COLUMN_SALDO + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = ?", new String[]{String.valueOf(userId)});
-////        if (cursor.moveToFirst()) {
-////            int saldoSekarang = cursor.getInt(0);
-////            int saldoBaru = saldoSekarang + jumlahSaldo;
-////
-////            ContentValues values = new ContentValues();
-////            values.put(COLUMN_SALDO, saldoBaru);
-////            int result = db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{String.valueOf(userId)});
-////            cursor.close();
-////            db.close();
-////            return result > 0;
-////        }
-////        cursor.close();
-////        db.close();
-////        return false;
-////    }
-////
-////    public boolean registerUser(String phone, String firstName, String lastName, String email, String password, String alamat, String ttl, String photoUri) {
-////        SQLiteDatabase db = this.getWritableDatabase();
-////
-////        ContentValues contentValues = new ContentValues();
-////        contentValues.put(COLUMN_PHONE, phone);
-////        contentValues.put(COLUMN_FIRST_NAME, firstName);
-////        contentValues.put(COLUMN_LAST_NAME, lastName);
-////        contentValues.put(COLUMN_EMAIL, email);
-////        contentValues.put(COLUMN_PASSWORD, password);
-////        contentValues.put(COLUMN_ALAMAT, alamat);
-////        contentValues.put(COLUMN_TTL, ttl);
-////        contentValues.put(COLUMN_PHOTO_URI, photoUri);
-////        contentValues.put(COLUMN_SALDO, 0);
-////
-////        long result = db.insert(TABLE_NAME, null, contentValues);
-////        db.close();
-////        return result != -1;
-////    }
-////
-////    public boolean addUser(String firstName, String lastName, String phone, String email, String password, String alamat, String ttl, String photoUri) {
-////        return registerUser(phone, firstName, lastName, email, password, alamat, ttl, photoUri);
-////    }
-////
-////    public boolean updateUser(int userId, String firstName, String lastName, String phone, String ttl, String photoUri) {
-////        SQLiteDatabase db = this.getWritableDatabase();
-////        ContentValues contentValues = new ContentValues();
-////        contentValues.put(COLUMN_FIRST_NAME, firstName);
-////        contentValues.put(COLUMN_LAST_NAME, lastName);
-////        contentValues.put(COLUMN_PHONE, phone);
-////        contentValues.put(COLUMN_TTL, ttl);
-////        contentValues.put(COLUMN_PHOTO_URI, photoUri);
-////
-////        int rowsAffected = db.update(TABLE_NAME, contentValues, COLUMN_ID + "=?", new String[]{String.valueOf(userId)});
-////        db.close();
-////        return rowsAffected > 0;
-////    }
-////
-////    public boolean deleteUser(int userId) {
-////        SQLiteDatabase db = this.getWritableDatabase();
-////        int rowsAffected = db.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{String.valueOf(userId)});
-////        db.close();
-////        return rowsAffected > 0;
-////    }
-////
-////    public boolean isEmailExists(String email) {
-////        SQLiteDatabase db = this.getReadableDatabase();
-////        Cursor cursor = db.query(TABLE_NAME, null, COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
-////        boolean exists = (cursor != null && cursor.moveToFirst());
-////        if (cursor != null) cursor.close();
-////        db.close();
-////        return exists;
-////    }
-////
-////    public int getUserCount() {
-////        SQLiteDatabase db = this.getReadableDatabase();
-////        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);
-////        int count = 0;
-////        if (cursor.moveToFirst()) {
-////            count = cursor.getInt(0);
-////        }
-////        cursor.close();
-////        db.close();
-////        return count;
-////    }
-////
-////    public User getUserById(int userId) {
-////        SQLiteDatabase db = this.getReadableDatabase();
-////        Cursor cursor = db.query(TABLE_NAME, null, COLUMN_ID + "=?", new String[]{String.valueOf(userId)}, null, null, null);
-////
-////        User user = null;
-////        if (cursor != null && cursor.moveToFirst()) {
-////            user = new User(
-////                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TTL)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHOTO_URI))
-////            );
-////        }
-////        if (cursor != null) cursor.close();
-////        db.close();
-////        return user;
-////    }
-////
-////    public User getUserByEmail(String email) {
-////        SQLiteDatabase db = this.getReadableDatabase();
-////        Cursor cursor = db.query(TABLE_NAME, null, COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
-////
-////        User user = null;
-////        if (cursor != null && cursor.moveToFirst()) {
-////            user = new User(
-////                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TTL)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHOTO_URI))
-////            );
-////        }
-////        if (cursor != null) cursor.close();
-////        db.close();
-////        return user;
-////    }
-////
-////    public User getUserByEmailAndPassword(String email, String password) {
-////        SQLiteDatabase db = this.getReadableDatabase();
-////        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_EMAIL + " = ? AND " + COLUMN_PASSWORD + " = ?", new String[]{email, password});
-////
-////        User user = null;
-////        if (cursor != null && cursor.moveToFirst()) {
-////            user = new User(
-////                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TTL)),
-////                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHOTO_URI))
-////            );
-////        }
-////        if (cursor != null) cursor.close();
-////        db.close();
-////        return user;
-////    }
-//
-//    public List<User> getAllUsers() {
-//        List<User> userList = new ArrayList<>();
-//        SQLiteDatabase db = this.getReadableDatabase();
-//
-//        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, COLUMN_FIRST_NAME + " ASC");
-//
-//        if (cursor != null && cursor.moveToFirst()) {
-//            do {
-//                User user = new User(
-//                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ALAMAT)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TTL)),
-//                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHOTO_URI))
-//                );
-//                userList.add(user);
-//            } while (cursor.moveToNext());
-//        }
-//        if (cursor != null) cursor.close();
-//        db.close();
-//        return userList;
-//    }
-//}

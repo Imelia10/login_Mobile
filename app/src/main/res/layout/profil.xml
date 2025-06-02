@@ -114,59 +114,73 @@
     <!-- FAB dan ikon navigasi -->
     <ImageView
         android:id="@+id/fab_custom"
-        android:layout_width="72dp"
+        android:layout_width="78dp"
         android:layout_height="70dp"
-        android:src="@drawable/logo"
-        android:layout_marginRight="30dp"
+        android:src="@drawable/t_history"
+        android:layout_marginLeft="60dp"
         android:elevation="8dp"
         android:clickable="true"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="2dp" />
+        android:layout_marginBottom="6dp" />
+
+<!--    <ImageView-->
+<!--        android:layout_width="44dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_marginEnd="115dp"-->
+<!--        android:layout_marginBottom="5dp"-->
+<!--        android:clickable="true"-->
+<!--        android:elevation="20dp"-->
+<!--        android:focusable="true"-->
+<!--        android:src="@drawable/uang1" />-->
+
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="72dp"
+        android:layout_height="70dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginLeft="260dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/bg_bottom_sc"
+        android:clickable="true"
+        android:elevation="8dp">
+
+
+        <ImageView
+            android:id="@+id/fab_custom1"
+            android:layout_width="56dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:elevation="8dp"
+            android:src="@drawable/profilnew" />
+
+    </FrameLayout>
 
     <ImageView
-        android:layout_width="44dp"
-        android:layout_height="60dp"
+        android:layout_width="80dp"
+        android:layout_height="70dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="115dp"
+        android:layout_marginEnd="225dp"
         android:layout_marginBottom="5dp"
         android:clickable="true"
         android:elevation="20dp"
         android:focusable="true"
-        android:src="@drawable/uang1" />
+        android:src="@drawable/t_voucher" />
 
     <ImageView
-        android:id="@+id/fab_custom1"
-        android:layout_width="72dp"
-        android:layout_height="70dp"
-        android:src="@drawable/profil2"
-        android:background="@drawable/bg_bottom_sc"
-        android:elevation="8dp"
-        android:clickable="true"
+        android:layout_width="60dp"
+        android:layout_height="56dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="25dp" />
-
-    <ImageView
-        android:layout_width="56dp"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="270dp"
-        android:layout_marginBottom="11dp"
+        android:layout_marginEnd="325dp"
+        android:layout_marginBottom="7dp"
         android:clickable="true"
         android:elevation="20dp"
         android:focusable="true"
-        android:src="@drawable/history" />
-
-    <ImageView
-        android:layout_width="56dp"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="340dp"
-        android:layout_marginBottom="11dp"
-        android:clickable="true"
-        android:elevation="20dp"
-        android:focusable="true"
-        android:src="@drawable/vchr" />
+        android:src="@drawable/t_home" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

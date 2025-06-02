@@ -102,6 +102,12 @@ public class DatabaseHelperProduk extends SQLiteOpenHelper {
         return produkList;
     }
 
+    public void deleteProdukById(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("produk", "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
     // Mendapatkan daftar produk berdasarkan kategori dan keyword, hanya produk dengan status Tersedia
     public List<Produk> getProdukByKategoriAndKeyword(String kategori, String keyword) {
         List<Produk> produkList = new ArrayList<>();

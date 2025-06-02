@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF9F9"
+    android:fitsSystemWindows="true"
+    tools:context=".AdminVoucherActivity">
+
+    <!-- Sticky Header -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
+
+    <!-- Tombol Kembali -->
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="17dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/back_home1" />
+
+    <!-- Judul Voucher -->
+
+    <!-- ScrollView untuk daftar voucher -->
+    <TextView
+        android:id="@+id/txtVoucherTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="100dp"
+        android:text="Voucher"
+        android:textColor="#000000"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:id="@+id/scrollArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="80dp">
+
+        <LinearLayout
+            android:id="@+id/voucherList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Card 1 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DISKON 5% s/d Rp 15RB"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Min Pembelanjaan 2x"
+                        android:textSize="14sp"
+                        android:textColor="#888888"
+                        android:layout_marginTop="4dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="6dp"
+                            android:layout_weight="1"
+                            android:background="#8B5E5E"
+                            android:layout_marginEnd="8dp"
+                            android:layout_gravity="center_vertical"/>
+
+                        <Button
+                            android:layout_width="90dp"
+                            android:layout_height="36dp"
+                            android:text="Klaim"
+                            android:textSize="14sp"
+                            android:textColor="#FFFFFF"
+                            android:backgroundTint="#D9B1B1"
+                            android:layout_gravity="center_vertical"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation Elements -->
+    <ImageView
+        android:id="@+id/fab_custom"
+        android:layout_width="78dp"
+        android:layout_height="70dp"
+        android:src="@drawable/t_history"
+        android:layout_marginLeft="120dp"
+        android:elevation="8dp"
+        android:clickable="true"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="6dp" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="80dp"
+        android:layout_height="75dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginRight="80dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/bg_bottom_sc"
+        android:clickable="true"
+        android:elevation="8dp">
+
+        <ImageView
+            android:id="@+id/fab_custom1"
+            android:layout_width="70dp"
+            android:layout_height="55dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="7dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:elevation="8dp"
+            android:src="@drawable/vouchernew" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/profil"
+        android:layout_width="60dp"
+        android:layout_height="58dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="7dp"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:src="@drawable/t_profil" />
+
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="325dp"
+        android:layout_marginBottom="7dp"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:src="@drawable/t_home" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bottom"
+        app:labelVisibilityMode="labeled"
+        app:layout_anchor="@+id/fab_custom"
+        app:layout_anchorGravity="center" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
