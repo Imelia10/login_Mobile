@@ -1,5 +1,7 @@
 package com.example.rewear_app1;
 
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +25,7 @@ public class VoucherActivity extends AppCompatActivity {
         initViews();
         initDatabase();
         getCurrentUserEmail();
+        showFirstTimeDialog();
         loadVouchers();
     }
 
@@ -44,6 +47,24 @@ public class VoucherActivity extends AppCompatActivity {
         }
     }
 
+    private void showFirstTimeDialog() {
+        SharedPreferences prefs = getSharedPreferences("voucher_prefs", MODE_PRIVATE);
+        int visitCount = prefs.getInt("visit_count", 0) + 1;
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("visit_count", visitCount);
+        editor.apply();
+
+        if (visitCount % 3 == 0) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Perhatian")
+                    .setMessage("Voucher tidak dapat digunakan pada transaksi Tukar Tambah.\n\nVoucher yang sudah diklaim tidak bisa diklaim ulang.")
+                    .setPositiveButton("Mengerti", null)
+                    .setCancelable(false)
+                    .show();
+        }
+    }
+
     private void loadVouchers() {
         voucherList.removeAllViews();
         Cursor cursor = dbHelper.getAllVouchers();
@@ -58,6 +79,7 @@ public class VoucherActivity extends AppCompatActivity {
             String judul = cursor.getString(cursor.getColumnIndexOrThrow("judul"));
             String syarat = cursor.getString(cursor.getColumnIndexOrThrow("syarat"));
             String kode = cursor.getString(cursor.getColumnIndexOrThrow("kode"));
+
             tambahVoucher(id, judul, syarat, kode);
         }
         cursor.close();
@@ -108,16 +130,30 @@ public class VoucherActivity extends AppCompatActivity {
         );
         btnVoucher.setLayoutParams(btnParams);
 
-        boolean canClaim = checkVoucherRequirements(syarat) && !dbHelperVoucher.isVoucherClaimed(currentUserEmail, id);
+        boolean alreadyClaimed = dbHelperVoucher.isVoucherClaimed(currentUserEmail, id);
+        boolean meetsRequirements = checkVoucherRequirements(syarat);
 
-        if (canClaim) {
-            btnVoucher.setText("Klaim");
-            btnVoucher.setBackgroundTintList(getResources().getColorStateList(R.color.red));
-            btnVoucher.setOnClickListener(v -> claimVoucher(id, kode, btnVoucher));
-        } else {
-            btnVoucher.setText(dbHelperVoucher.isVoucherClaimed(currentUserEmail, id) ? "Sudah Diklaim" : "Tidak Memenuhi Syarat");
+        if (alreadyClaimed) {
+            btnVoucher.setText("Sudah Diklaim");
             btnVoucher.setEnabled(false);
             btnVoucher.setBackgroundTintList(getResources().getColorStateList(android.R.color.darker_gray));
+        } else if (!meetsRequirements) {
+            btnVoucher.setText("Tidak Memenuhi Syarat");
+            btnVoucher.setEnabled(false);
+            btnVoucher.setBackgroundTintList(getResources().getColorStateList(android.R.color.darker_gray));
+        } else {
+            btnVoucher.setText("Klaim");
+            btnVoucher.setEnabled(true);
+            btnVoucher.setBackgroundTintList(getResources().getColorStateList(R.color.red));
+            btnVoucher.setOnClickListener(v -> {
+                boolean success = dbHelperVoucher.addClaimedVoucher(currentUserEmail, id, kode);
+                if (success) {
+                    Toast.makeText(this, "Voucher berhasil diklaim!", Toast.LENGTH_SHORT).show();
+                    loadVouchers(); // refresh tampilan
+                } else {
+                    Toast.makeText(this, "Gagal mengklaim voucher", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         isi.addView(tvJudul);
@@ -128,23 +164,8 @@ public class VoucherActivity extends AppCompatActivity {
         voucherList.addView(cardView);
     }
 
-    private void claimVoucher(int voucherId, String kodeVoucher, Button btnVoucher) {
-        boolean success = dbHelperVoucher.addClaimedVoucher(currentUserEmail, voucherId, kodeVoucher);
-
-        if (success) {
-            Toast.makeText(this, "Voucher berhasil diklaim!", Toast.LENGTH_SHORT).show();
-            btnVoucher.setText("Sudah Diklaim");
-            btnVoucher.setEnabled(false);
-            btnVoucher.setBackgroundTintList(getResources().getColorStateList(android.R.color.darker_gray));
-        } else {
-            Toast.makeText(this, "Gagal mengklaim voucher", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private boolean checkVoucherRequirements(String syarat) {
-        if (currentUserEmail == null || currentUserEmail.isEmpty()) {
-            return false;
-        }
+        if (currentUserEmail == null || currentUserEmail.isEmpty()) return false;
 
         if (syarat.contains("Minimal belanja")) {
             try {
@@ -165,6 +186,7 @@ public class VoucherActivity extends AppCompatActivity {
                 return false;
             }
         }
+
         return false;
     }
 

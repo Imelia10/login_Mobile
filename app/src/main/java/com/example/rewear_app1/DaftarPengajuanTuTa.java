@@ -14,7 +14,6 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import android.graphics.Typeface;
-import android.widget.GridLayout.LayoutParams;
 
 import java.io.File;
 import java.util.ArrayList;

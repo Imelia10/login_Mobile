@@ -3,19 +3,21 @@ package com.example.rewear_app1;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.util.Log;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import androidx.cardview.widget.CardView;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
 
 public class TransaksiActivity extends AppCompatActivity {
@@ -33,7 +35,6 @@ public class TransaksiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaksi);
 
-        // Initialize UI components
         btnBeli = findViewById(R.id.btnbeli);
         btnSewa = findViewById(R.id.btnsewa);
         btnTukarTambah = findViewById(R.id.btntukartambah);
@@ -44,27 +45,19 @@ public class TransaksiActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelperProduk(this);
 
-        // Handle back icon click
         backIcon.setOnClickListener(v -> {
-            // Clear the activity stack and go to HomeActivity
             Intent intent = new Intent(TransaksiActivity.this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         });
 
-        // Get category from intent
         if (getIntent().hasExtra("kategori_terpilih")) {
             kategoriAktif = getIntent().getStringExtra("kategori_terpilih");
         }
 
-        // Set up category buttons
         setupCategoryButtons();
-
-        // Set up search view
         setupSearchView();
-
-        // Set initial display
         setSelectedButtonBasedOnCategory();
         tampilkanProduk("", kategoriAktif);
     }
@@ -129,7 +122,6 @@ public class TransaksiActivity extends AppCompatActivity {
 
     private void tampilkanProduk(String keyword, String kategori) {
         List<Produk> produkList = dbHelper.getProdukByKategoriAndKeyword(kategori, keyword);
-
         gridProduk.removeAllViews();
 
         if (produkList.isEmpty()) {
@@ -159,39 +151,25 @@ public class TransaksiActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(100)));
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            String uriStr = produk.getGambarUri();
-            Log.d("CEK_URI", "Path gambar dari SQLite: " + uriStr);
-
-
             String gambarUri = produk.getGambarUri();
-
             if (gambarUri != null && !gambarUri.isEmpty()) {
-                // Split string berdasarkan \n untuk dapat list gambar
                 String[] gambarArray = gambarUri.split("\n");
                 if (gambarArray.length > 0 && !gambarArray[0].isEmpty()) {
-                    iv.setImageURI(Uri.parse(gambarArray[0]));  // pakai gambar pertama
+                    iv.setImageURI(Uri.parse(gambarArray[0]));
                 } else {
-                    iv.setImageResource(R.drawable.profil1);  // default jika kosong
+                    iv.setImageResource(R.drawable.profil1);
                 }
             } else {
-                iv.setImageResource(R.drawable.profil1);  // default jika null atau kosong
+                iv.setImageResource(R.drawable.profil1);
             }
-
-//            try {
-//                iv.setImageURI(Uri.parse(uriStr));
-//            } catch (Exception e) {
-//                iv.setImageResource(R.drawable.profil1);
-//                e.printStackTrace();
-//            }
 
             iv.setOnClickListener(v -> {
                 Intent intent = new Intent(TransaksiActivity.this, DetailProdukActivity.class);
                 intent.putExtra("produk_id", produk.getId());
                 intent.putExtra("from", "transaksi");
-                intent.putExtra("kategori", kategoriAktif); // <-- tambahkan ini
+                intent.putExtra("kategori", kategoriAktif);
                 startActivity(intent);
             });
-
 
             TextView nama = new TextView(this);
             nama.setText(produk.getNama());
@@ -199,7 +177,7 @@ public class TransaksiActivity extends AppCompatActivity {
             nama.setTypeface(null, Typeface.BOLD);
 
             TextView harga = new TextView(this);
-            harga.setText("Rp " + produk.getHarga());
+            harga.setText("Rp " + formatHarga(produk.getHarga()));
             harga.setTextSize(14);
 
             layout.addView(iv);
@@ -210,14 +188,29 @@ public class TransaksiActivity extends AppCompatActivity {
         }
     }
 
+    private String formatHarga(String hargaStr) {
+        try {
+            double harga = Double.parseDouble(hargaStr);
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+            symbols.setGroupingSeparator('.');
+            symbols.setDecimalSeparator(',');
+
+            DecimalFormat formatter = new DecimalFormat("#,###", symbols);
+            return formatter.format(harga);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return hargaStr;
+        }
+    }
+
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         tampilkanProduk(searchView.getQuery().toString(), kategoriAktif);
     }
-
 }

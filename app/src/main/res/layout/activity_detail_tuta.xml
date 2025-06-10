@@ -34,8 +34,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="100dp"
-            android:text="Detail Barang"
+            android:layout_marginRight="70dp"
+            android:text="Detail Pesanan"
             android:textColor="@android:color/white"
             android:textSize="30sp"
             android:textStyle="bold" />
@@ -259,26 +259,7 @@
                         android:text="Rp 50.000"
                         android:textSize="14sp" />
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="4dp">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Anda Menambah"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/harga_produk_jual"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 50.000"
-                        android:textSize="14sp" />
-                </LinearLayout>
 
                 <!-- Delivery Charge -->
                 <LinearLayout
@@ -321,7 +302,28 @@
                         android:id="@+id/discount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="-Rp 15.000"
+                        android:text="Rp 15.000"
+                        android:textSize="14sp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:textColor="@color/red"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Anda Menambah"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/harga_produk_jual"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 50.000"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>

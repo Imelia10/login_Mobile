@@ -6,9 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHelperVoucher extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "UserVouchers.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String TABLE_CLAIMED_VOUCHERS = "claimed_vouchers";
     private static final String COLUMN_ID = "id";
@@ -38,7 +41,12 @@ public class DatabaseHelperVoucher extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    // Tambahkan voucher yang diklaim, cek duplikasi
     public boolean addClaimedVoucher(String userEmail, int voucherId, String voucherCode) {
+        if (isVoucherClaimed(userEmail, voucherId)) {
+            return false; // Sudah diklaim sebelumnya
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_EMAIL, userEmail);
@@ -49,14 +57,20 @@ public class DatabaseHelperVoucher extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    // Cek apakah voucher sudah diklaim oleh user
     public boolean isVoucherClaimed(String userEmail, int voucherId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_CLAIMED_VOUCHERS +
-                " WHERE " + COLUMN_USER_EMAIL + " = ? AND " + COLUMN_VOUCHER_ID + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{userEmail, String.valueOf(voucherId)});
-
-        boolean isClaimed = cursor.getCount() > 0;
-        cursor.close();
-        return isClaimed;
+        Cursor cursor = null;
+        try {
+            String query = "SELECT 1 FROM " + TABLE_CLAIMED_VOUCHERS +
+                    " WHERE " + COLUMN_USER_EMAIL + " = ? AND " + COLUMN_VOUCHER_ID + " = ?";
+            cursor = db.rawQuery(query, new String[]{userEmail, String.valueOf(voucherId)});
+            return cursor.moveToFirst();
+        } finally {
+            if (cursor != null) cursor.close();
+        }
     }
+
+
+
 }

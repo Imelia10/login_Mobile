@@ -12,7 +12,7 @@ import java.util.List;
 public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ReWearTransaksiDB";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 5;
 
     // Nama tabel dan kolom
     private static final String TABLE_TRANSAKSI = "transaksi";
@@ -109,18 +109,17 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
         return transaksiList;
     }
 
-    public int getJumlahTransaksiUser(String userEmail) {
-        int count = 0;
+    public int getJumlahTransaksiUser(String emailPembeli) {
+        int jumlah = 0;
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT COUNT(*) as count FROM " + TABLE_TRANSAKSI +
-                " WHERE " + COLUMN_EMAIL_PEMBELI + " = ? AND " + COLUMN_STATUS + " = 'completed'";
-        Cursor cursor = db.rawQuery(query, new String[]{userEmail});
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_TRANSAKSI + " WHERE " + COLUMN_EMAIL_PEMBELI + " = ?", new String[]{emailPembeli});
         if (cursor.moveToFirst()) {
-            count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
+            jumlah = cursor.getInt(0);
         }
         cursor.close();
-        return count;
+        return jumlah;
     }
+
 
     public double getTotalBelanjaUser(String userEmail) {
         double total = 0;

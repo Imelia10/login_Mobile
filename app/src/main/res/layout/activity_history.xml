@@ -111,7 +111,7 @@
 
 
     <ImageView
-        android:id="@+id/icon_vchr"
+        android:id="@+id/home"
         android:layout_width="59dp"
         android:layout_height="50dp"
         android:layout_gravity="bottom|end"

@@ -13,7 +13,7 @@ import java.util.List;
 public class DatabaseHelperProduk extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ReWearDB";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     private static final String TABLE_PRODUK = "produk";
 

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,9 +19,11 @@ public class DetailPesanan extends AppCompatActivity {
     private ImageView backIcon, btnBatal, btnBayar, gambarProduk;
     private TextView namaProduk, hargaProduk, alamatPengiriman, metodePembayaran,
             tanggalPesanan, ongkir, discount, totalHarga, hargaProdukRincian;
+
     private String currentUserEmail;
     private Produk produk;
     private Transaksi transaksi;
+
     private DatabaseHelperProduk dbHelperProduk;
     private DatabaseHelperTransaksi dbHelperTransaksi;
     private DatabaseHelper dbHelperUser;
@@ -90,10 +91,8 @@ public class DetailPesanan extends AppCompatActivity {
                 return;
             }
 
-            // Load product image
             loadProductImage(gambarUri != null ? gambarUri : produk.getGambarUri());
 
-            // Initialize transaction
             transaksi = new Transaksi();
             transaksi.setIdProduk(produkId);
             transaksi.setEmailPembeli(currentUserEmail);
@@ -101,8 +100,7 @@ public class DetailPesanan extends AppCompatActivity {
             transaksi.setAlamat(currentUser.getAlamat());
             transaksi.setMetodePembayaran("COD");
             transaksi.setOngkir(15000);
-            transaksi.setDiskon(0);
-            transaksi.setTotal(Double.parseDouble(produk.getHarga()) + transaksi.getOngkir());
+            transaksi.setDiskon(0); // default, akan diperbarui di displayData()
         } else {
             transaksi = dbHelperTransaksi.getTransaksiTerakhir(currentUserEmail);
             if (transaksi == null) {
@@ -118,7 +116,6 @@ public class DetailPesanan extends AppCompatActivity {
                 return;
             }
 
-            // Load product image
             loadProductImage(produk.getGambarUri());
         }
 
@@ -132,25 +129,16 @@ public class DetailPesanan extends AppCompatActivity {
         }
 
         try {
-            // Take the first image if multiple exist
             String firstImageUri = imageUris.split("\n")[0].trim();
             Uri uri = Uri.parse(firstImageUri);
 
-            // Check if URI is from file provider
-            if (uri.getScheme() != null && uri.getScheme().equals("content")) {
-                // Handle content URIs (from FileProvider)
+            if ("content".equals(uri.getScheme())) {
                 gambarProduk.setImageURI(uri);
-            } else if (uri.getScheme() != null && uri.getScheme().equals("file")) {
-                // Handle file URIs
+            } else if ("file".equals(uri.getScheme())) {
                 File file = new File(uri.getPath());
-                Uri fileUri = FileProvider.getUriForFile(
-                        this,
-                        getPackageName() + ".fileprovider",
-                        file
-                );
+                Uri fileUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
                 gambarProduk.setImageURI(fileUri);
             } else {
-                // Handle other URIs (http, https, etc.)
                 gambarProduk.setImageURI(uri);
             }
 
@@ -162,23 +150,45 @@ public class DetailPesanan extends AppCompatActivity {
     }
 
     private void displayData() {
-        // Display product data
         namaProduk.setText(produk.getNama());
-        hargaProduk.setText(formatRupiah(Double.parseDouble(produk.getHarga())));
-        hargaProdukRincian.setText(formatRupiah(Double.parseDouble(produk.getHarga())));
+        double hargaProdukDouble = Double.parseDouble(produk.getHarga());
+        hargaProduk.setText(formatRupiah(hargaProdukDouble));
+        hargaProdukRincian.setText(formatRupiah(hargaProdukDouble));
 
-        // Display shipping info
         alamatPengiriman.setText(transaksi.getAlamat());
         metodePembayaran.setText(transaksi.getMetodePembayaran());
         tanggalPesanan.setText(transaksi.getTanggal());
 
-        // Display shipping cost and discount
-        ongkir.setText(formatRupiah(transaksi.getOngkir()));
-        discount.setText(formatRupiah(0));
+        double ongkirDouble = transaksi.getOngkir();
+        double diskon = cekDanTerapkanDiskon(hargaProdukDouble);
+        transaksi.setDiskon(diskon);
 
-        // Calculate total
-        double total = Double.parseDouble(produk.getHarga()) + transaksi.getOngkir();
+        ongkir.setText(formatRupiah(ongkirDouble));
+        discount.setText(formatRupiah(diskon));
+
+        double total = hargaProdukDouble + ongkirDouble - diskon;
+        transaksi.setTotal(total);
         totalHarga.setText(formatRupiah(total));
+    }
+
+    private double cekDanTerapkanDiskon(double hargaProduk) {
+        int jumlahTransaksi = dbHelperTransaksi.getAllTransaksiUser(currentUserEmail).size();
+        double persen = 0;
+        double maxDiskon = 0;
+
+        if (jumlahTransaksi >= 4) {
+            persen = 0.15;
+            maxDiskon = 35000;
+        } else if (jumlahTransaksi >= 3) {
+            persen = 0.10;
+            maxDiskon = 25000;
+        } else if (jumlahTransaksi >= 2) {
+            persen = 0.07;
+            maxDiskon = 15000;
+        }
+
+        double potongan = hargaProduk * persen;
+        return Math.min(potongan, maxDiskon);
     }
 
     private String formatRupiah(double nilai) {

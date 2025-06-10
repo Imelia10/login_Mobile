@@ -113,7 +113,7 @@
 
     <!-- FAB dan ikon navigasi -->
     <ImageView
-        android:id="@+id/fab_custom"
+        android:id="@+id/history"
         android:layout_width="78dp"
         android:layout_height="70dp"
         android:src="@drawable/t_history"
@@ -123,16 +123,6 @@
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="6dp" />
 
-<!--    <ImageView-->
-<!--        android:layout_width="44dp"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_gravity="bottom|end"-->
-<!--        android:layout_marginEnd="115dp"-->
-<!--        android:layout_marginBottom="5dp"-->
-<!--        android:clickable="true"-->
-<!--        android:elevation="20dp"-->
-<!--        android:focusable="true"-->
-<!--        android:src="@drawable/uang1" />-->
 
 
     <FrameLayout
@@ -148,7 +138,7 @@
 
 
         <ImageView
-            android:id="@+id/fab_custom1"
+            android:id="@+id/fab_custom"
             android:layout_width="56dp"
             android:layout_height="50dp"
             android:layout_gravity="bottom|end"
@@ -161,6 +151,7 @@
     </FrameLayout>
 
     <ImageView
+        android:id="@+id/voucher"
         android:layout_width="80dp"
         android:layout_height="70dp"
         android:layout_gravity="bottom|end"
@@ -172,6 +163,7 @@
         android:src="@drawable/t_voucher" />
 
     <ImageView
+        android:id="@+id/home"
         android:layout_width="60dp"
         android:layout_height="56dp"
         android:layout_gravity="bottom|end"

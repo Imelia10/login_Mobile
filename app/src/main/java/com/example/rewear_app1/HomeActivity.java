@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -68,14 +67,7 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Klik ke DompetActivity (ditambahkan)
-//        ImageView dompetIcon = findViewById(R.id.icon_dompet); // Pastikan ada di XML
-//        dompetIcon.setOnClickListener(v -> {
-//            Intent intent = new Intent(HomeActivity.this, DompetActivity.class);
-//            intent.putExtra("user_id", userId); // pastikan variabel userId terisi dengan benar
-//            startActivity(intent);
-//
-//        });
+
 
         // Klik ke VoucherActivity (ditambahkan)
         ImageView voucherIcon = findViewById(R.id.voucher); // Pastikan id voucher ada di XML

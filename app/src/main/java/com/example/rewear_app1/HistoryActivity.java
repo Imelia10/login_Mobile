@@ -20,7 +20,8 @@ public class HistoryActivity extends AppCompatActivity {
     private DatabaseHelperProduk dbHelperProduk;
     private LinearLayout historyContainer;
     private String currentUserEmail;
-    private ImageView backBtn, fabCustom, fabCustom1;
+
+    private ImageView backBtn, fabCustom, fabCustom1, home;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class HistoryActivity extends AppCompatActivity {
         backBtn = findViewById(R.id.back);
         fabCustom = findViewById(R.id.fab_custom);
         fabCustom1 = findViewById(R.id.fab_custom1);
+        home = findViewById(R.id.home); // <<-- DITAMBAHKAN agar tidak NullPointer
     }
 
     private void initDatabase() {
@@ -80,12 +82,10 @@ public class HistoryActivity extends AppCompatActivity {
         TextView tvDate = cardView.findViewById(R.id.tvDate);
         TextView tvAmount = cardView.findViewById(R.id.tvAmount);
 
-        // Set text data
         tvNamaBarang.setText(product.getNama());
         tvDate.setText(transaction.getTanggal());
         tvAmount.setText(formatRupiah(transaction.getTotal()));
 
-        // Load product image with better handling
         loadProductImage(productImage, product.getGambarUri());
 
         historyContainer.addView(cardView);
@@ -98,21 +98,10 @@ public class HistoryActivity extends AppCompatActivity {
         }
 
         try {
-            // Take the first image if multiple exist
             String firstImageUri = imageUris.split("\n")[0].trim();
             Uri uri = Uri.parse(firstImageUri);
 
-            // Handle different URI types
-            if (uri.getScheme() != null && uri.getScheme().equals("content")) {
-                // For content URIs from FileProvider
-                imageView.setImageURI(uri);
-            } else if (uri.getScheme() != null && uri.getScheme().equals("file")) {
-                // For file URIs, convert to content URI
-                imageView.setImageURI(uri);
-            } else {
-                // For other URIs (http, https, etc.)
-                imageView.setImageURI(uri);
-            }
+            imageView.setImageURI(uri);
 
             Log.d(TAG, "Successfully loaded image: " + uri.toString());
         } catch (Exception e) {
@@ -131,13 +120,36 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        backBtn.setOnClickListener(v -> navigateToHome());
-        fabCustom.setOnClickListener(v -> navigateToHome());
-        fabCustom1.setOnClickListener(v -> {
-            Intent intent = new Intent(HistoryActivity.this, ProfilActivity.class);
-            intent.putExtra("email", currentUserEmail);
-            startActivity(intent);
-        });
+        if (backBtn != null) {
+            backBtn.setOnClickListener(v -> navigateToHome());
+        }
+
+        if (home != null) {
+            home.setOnClickListener(v -> navigateToHome());
+        }
+
+        if (fabCustom != null) {
+            fabCustom.setOnClickListener(v -> navigateToHome());
+        }
+
+        if (fabCustom1 != null) {
+            fabCustom1.setOnClickListener(v -> {
+                Intent intent = new Intent(HistoryActivity.this, ProfilActivity.class);
+                intent.putExtra("email", currentUserEmail);
+                startActivity(intent);
+            });
+        }
+
+        ImageView voucherIcon = findViewById(R.id.voucher);
+        if (voucherIcon != null) {
+            voucherIcon.setOnClickListener(v -> {
+                Intent intent = new Intent(HistoryActivity.this, VoucherActivity.class);
+                intent.putExtra("user_email", currentUserEmail);
+                startActivity(intent);
+            });
+        } else {
+            Log.w(TAG, "voucherIcon tidak ditemukan di layout");
+        }
     }
 
     private void navigateToHome() {

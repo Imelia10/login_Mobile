@@ -1,9 +1,11 @@
 package com.example.rewear_app1;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
+import com.example.rewear_app1.presentation.login.view.LoginActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,8 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ProfilActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
-    private ImageView fotoProfil, logoImage, back;
+    private ImageView fotoProfil, history, back, voucher;
     private TextView etFirstName, etLastName, etPhone, etEmail, etAlamat;
+    private String currentUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,20 +27,22 @@ public class ProfilActivity extends AppCompatActivity {
 
         // Inisialisasi semua view
         fotoProfil = findViewById(R.id.foto);
-        logoImage = findViewById(R.id.fab_custom);
+        history = findViewById(R.id.history);
         back = findViewById(R.id.back);
         etFirstName = findViewById(R.id.etFirstName);
         etLastName = findViewById(R.id.etLastName);
         etPhone = findViewById(R.id.etPhone);
         etEmail = findViewById(R.id.etEmail);
         etAlamat = findViewById(R.id.etAlamat);
+        voucher = findViewById(R.id.voucher);
 
-        // Ambil email dari intent
-        String email = getIntent().getStringExtra("email");
+        // Ambil email user dari SharedPreferences, bukan intent
+        SharedPreferences sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE);
+        currentUserEmail = sharedPreferences.getString("email", null);
 
-        if (email != null) {
+        if (currentUserEmail != null) {
             // Ambil data user dari database berdasarkan email
-            User user = dbHelper.getUserByEmail(email);
+            User user = dbHelper.getUserByEmail(currentUserEmail);
 
             if (user != null) {
                 // Set data ke TextView
@@ -57,19 +62,36 @@ public class ProfilActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "User tidak ditemukan", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, "User belum login, silakan login dulu", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ProfilActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
-        // Klik logoImage --> Balik ke HomeActivity
-        logoImage.setOnClickListener(view -> {
-            Intent intent = new Intent(ProfilActivity.this, HomeActivity.class);
+        // Klik ke Card History
+        ImageView cardHistory = findViewById(R.id.history);
+        cardHistory.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilActivity.this, HistoryActivity.class);
+            intent.putExtra("user_email", currentUserEmail);
             startActivity(intent);
-            finish(); // supaya ProfilActivity ditutup, user langsung di Home
         });
-        // Klik back --> Balik ke HomeActivity
+
+        // Klik ke VoucherActivity (ditambahkan)
+        ImageView voucherIcon = findViewById(R.id.voucher); // Pastikan id voucher ada di XML
+        voucherIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilActivity.this, VoucherActivity.class);
+            intent.putExtra("user_email", currentUserEmail); // pastikan currentUserEmail sudah benar
+            startActivity(intent);
+
+        });
+
+        // Klik back --> ke HomeActivity
         back.setOnClickListener(view -> {
             Intent intent = new Intent(ProfilActivity.this, HomeActivity.class);
             startActivity(intent);
-            finish(); // supaya ProfilActivity ditutup, user langsung di Home
+            finish();
         });
+
     }
 }

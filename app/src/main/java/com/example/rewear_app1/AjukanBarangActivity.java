@@ -17,9 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -273,7 +270,7 @@ public class AjukanBarangActivity extends AppCompatActivity {
             boolean success = true;
 
             if (success) {
-                Toast.makeText(this, "Pengajuan berhasil disimpan", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Detail Pengajuan Anda", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(this, DetailTukarTambahActivity.class);
                 intent.putExtra("produk_id", produk.getId());
