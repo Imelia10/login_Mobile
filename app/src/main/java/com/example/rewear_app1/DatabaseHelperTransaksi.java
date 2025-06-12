@@ -79,6 +79,18 @@ public class DatabaseHelperTransaksi extends SQLiteOpenHelper {
         return id;
     }
 
+    public int getJumlahTransaksiDenganDiskon(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM transaksi WHERE email_pembeli = ? AND diskon > 0", new String[]{email});
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        return count;
+    }
 
     public List<Transaksi> getAllTransaksi() {
         List<Transaksi> transaksiList = new ArrayList<>();

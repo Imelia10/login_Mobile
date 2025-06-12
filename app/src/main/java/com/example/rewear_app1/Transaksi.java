@@ -16,6 +16,8 @@ public class Transaksi {
     private double diskon;
     private double total;
     private String status;
+    private String voucherCode; // Add this field
+
 
     // Getter dan Setter
     public void setIdUser(int idUser) {
@@ -70,4 +72,11 @@ public class Transaksi {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public void setVoucherCode(String voucherCode) {
+        this.voucherCode = voucherCode;
+    }
 }

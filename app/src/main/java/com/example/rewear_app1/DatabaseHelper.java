@@ -12,7 +12,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ReWear.db";
-    private static final int DATABASE_VERSION = 17; // Incremented from 11
+    private static final int DATABASE_VERSION = 19; // Incremented from 11
 
     // Users table constants
     private static final String TABLE_NAME = "users";

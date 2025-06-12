@@ -17,10 +17,10 @@ public class AdminVoucherActivity extends AppCompatActivity {
     private ImageButton btnTambah;
     private ImageView back;
     private DatabaseHelper dbHelper;
-    private boolean isAdmin = false; // penanda role
-    private static final String TABLE_VOUCHER = "voucher";  // sesuaikan dengan nama tabel di DB kamu
-    private static final String COLUMN_VOUCHER_JUDUL = "judul";  // kolom judul voucher
-    private static final String COLUMN_VOUCHER_SYARAT = "syarat";  // kolom syarat voucher
+    private boolean isAdmin = false;
+    private static final String TABLE_VOUCHER = "voucher";
+    private static final String COLUMN_VOUCHER_JUDUL = "judul";
+    private static final String COLUMN_VOUCHER_SYARAT = "syarat";
 
 
     @Override
@@ -62,8 +62,8 @@ public class AdminVoucherActivity extends AppCompatActivity {
         final String[] syarat = {
                 "Minimal 2 transaksi",
                 "Minimal 3 transaksi",
-                "Minimal 3 transaksi",
-                "Minimal 4 transaksi"
+                "Minimal 6 transaksi",
+                "Minimal 10 transaksi"
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

@@ -27,6 +27,8 @@ public class DetailPesanan extends AppCompatActivity {
     private DatabaseHelperProduk dbHelperProduk;
     private DatabaseHelperTransaksi dbHelperTransaksi;
     private DatabaseHelper dbHelperUser;
+    private DatabaseHelperVoucher dbHelperVoucher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class DetailPesanan extends AppCompatActivity {
     }
 
     private void initDatabaseHelpers() {
+        dbHelperVoucher = new DatabaseHelperVoucher(this);
         dbHelperProduk = new DatabaseHelperProduk(this);
         dbHelperTransaksi = new DatabaseHelperTransaksi(this);
         dbHelperUser = new DatabaseHelper(this);
@@ -172,6 +175,15 @@ public class DetailPesanan extends AppCompatActivity {
     }
 
     private double cekDanTerapkanDiskon(double hargaProduk) {
+        // Hitung berapa voucher yang pernah diklaim
+        int totalVoucherDiklaim = dbHelperVoucher.getJumlahVoucherYangDiklaim(currentUserEmail);
+        int transaksiDiskonSebelumnya = dbHelperTransaksi.getJumlahTransaksiDenganDiskon(currentUserEmail);
+
+        // Jika user tidak punya voucher tersisa, diskon = 0
+        if (totalVoucherDiklaim <= transaksiDiskonSebelumnya) {
+            return 0;
+        }
+
         int jumlahTransaksi = dbHelperTransaksi.getAllTransaksiUser(currentUserEmail).size();
         double persen = 0;
         double maxDiskon = 0;
@@ -190,6 +202,8 @@ public class DetailPesanan extends AppCompatActivity {
         double potongan = hargaProduk * persen;
         return Math.min(potongan, maxDiskon);
     }
+
+
 
     private String formatRupiah(double nilai) {
         return "Rp " + String.format("%,.0f", nilai).replace(",", ".");

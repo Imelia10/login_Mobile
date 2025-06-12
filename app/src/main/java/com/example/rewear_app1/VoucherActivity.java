@@ -1,6 +1,7 @@
 package com.example.rewear_app1;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import androidx.cardview.widget.CardView;
 public class VoucherActivity extends AppCompatActivity {
 
     private LinearLayout voucherList;
+    private ImageView  back;
+
     private DatabaseHelper dbHelper;
     private DatabaseHelperTransaksi dbHelperTransaksi;
     private DatabaseHelperVoucher dbHelperVoucher;
@@ -22,12 +25,22 @@ public class VoucherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voucher);
 
+        back = findViewById(R.id.back); // inisialisasi tombol back
+
+        // Set klik listener untuk kembali ke HomeActivity
+        back.setOnClickListener(view -> {
+            Intent intent = new Intent(VoucherActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
         initViews();
         initDatabase();
         getCurrentUserEmail();
         showFirstTimeDialog();
         loadVouchers();
     }
+
 
     private void initViews() {
         voucherList = findViewById(R.id.voucherList);
@@ -163,7 +176,6 @@ public class VoucherActivity extends AppCompatActivity {
         cardView.addView(isi);
         voucherList.addView(cardView);
     }
-
     private boolean checkVoucherRequirements(String syarat) {
         if (currentUserEmail == null || currentUserEmail.isEmpty()) return false;
 
@@ -189,6 +201,7 @@ public class VoucherActivity extends AppCompatActivity {
 
         return false;
     }
+
 
     @Override
     protected void onDestroy() {

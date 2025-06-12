@@ -4,7 +4,7 @@ public class Voucher {
     private int id;
     private String kode;
     private int potongan;
-    private int syarat; // <--- pastikan ini ada
+    private int syarat;
 
     // Getter
     public int getId() {
@@ -20,7 +20,7 @@ public class Voucher {
     }
 
     public int getSyarat() {
-        return syarat;  // <--- tambahkan ini jika belum ada
+        return syarat;
     }
 
     // Setter

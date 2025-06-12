@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ProfilActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
-    private ImageView fotoProfil, history, back, voucher;
+    private ImageView fotoProfil, history, back, voucher, home;
     private TextView etFirstName, etLastName, etPhone, etEmail, etAlamat;
     private String currentUserEmail;
 
@@ -29,6 +29,7 @@ public class ProfilActivity extends AppCompatActivity {
         fotoProfil = findViewById(R.id.foto);
         history = findViewById(R.id.history);
         back = findViewById(R.id.back);
+        home = findViewById(R.id.home);
         etFirstName = findViewById(R.id.etFirstName);
         etLastName = findViewById(R.id.etLastName);
         etPhone = findViewById(R.id.etPhone);
@@ -88,6 +89,13 @@ public class ProfilActivity extends AppCompatActivity {
 
         // Klik back --> ke HomeActivity
         back.setOnClickListener(view -> {
+            Intent intent = new Intent(ProfilActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
+        // Klik home --> ke HomeActivity
+        ImageView home = findViewById(R.id.home); // Pastikan id voucher ada di XML
+        home.setOnClickListener(view -> {
             Intent intent = new Intent(ProfilActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();

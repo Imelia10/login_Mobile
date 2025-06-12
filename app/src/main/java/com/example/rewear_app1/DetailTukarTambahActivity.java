@@ -18,8 +18,8 @@ import java.util.*;
 
 public class DetailTukarTambahActivity extends AppCompatActivity {
 
-    private ImageView backIcon, imageBarang, lanjut;
-    private TextView namaProduk, hargaProduk, tanggalPesanan, hargaRincian, hargaTambah, hargaProdukJual, ongkir, discount, totalHarga;
+    private ImageView backIcon, imageBarang, lanjut, batal;
+    private TextView namaProduk, hargaProduk, tanggalPesanan, hargaRincian, hargaTambah, hargaProdukJual, ongkir, totalHarga;
     private EditText namaBarangTukar, metodePembayaran;
 
     private DatabaseHelperProduk dbHelperProduk;
@@ -58,6 +58,7 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
 
     private void initViews() {
         backIcon = findViewById(R.id.back_icon);
+        batal = findViewById(R.id.batal);
         imageBarang = findViewById(R.id.imageBarang);
         namaProduk = findViewById(R.id.nama_produk);
         hargaProduk = findViewById(R.id.harga_produk);
@@ -68,7 +69,6 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
         hargaTambah = findViewById(R.id.harga_tambah);
         hargaProdukJual = findViewById(R.id.harga_produk_jual);
         ongkir = findViewById(R.id.ongkir);
-        discount = findViewById(R.id.discount);
         totalHarga = findViewById(R.id.total_harga);
         lanjut = findViewById(R.id.lanjut);
     }
@@ -138,26 +138,6 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
         calculatePrices();
     }
 
-    private int cekDanTerapkanDiskon(int hargaProduk, String emailUser) {
-        DatabaseHelperTransaksi dbTransaksi = new DatabaseHelperTransaksi(this);
-        int jumlahTransaksi = dbTransaksi.getAllTransaksiUser(emailUser).size();
-        double persen = 0;
-        int maxDiskon = 0;
-
-        if (jumlahTransaksi >= 4) {
-            persen = 0.15;
-            maxDiskon = 35000;
-        } else if (jumlahTransaksi >= 3) {
-            persen = 0.10;
-            maxDiskon = 25000;
-        } else if (jumlahTransaksi >= 2) {
-            persen = 0.07;
-            maxDiskon = 15000;
-        }
-
-        int potongan = (int)(hargaProduk * persen);
-        return Math.min(potongan, maxDiskon);
-    }
 
     private void calculatePrices() {
         try {
@@ -167,16 +147,14 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
             int hargaProdukAsli = parseRupiahToInt(produk.getHarga());
             int hargaTukar = hargaTukarStr != null ? parseRupiahToInt(hargaTukarStr) : 0;
             int biayaKirim = 15000;
-            int diskon = cekDanTerapkanDiskon(hargaProdukAsli, emailUser);
 
             int selisihHarga = hargaProdukAsli - hargaTukar;
-            int total = Math.max(selisihHarga, 0) + biayaKirim - diskon;
+            int total = Math.max(selisihHarga, 0) + biayaKirim;
 
             hargaRincian.setText(formatRupiah(String.valueOf(hargaTukar)));
             hargaTambah.setText(formatRupiah(String.valueOf(hargaProdukAsli)));
             hargaProdukJual.setText(formatRupiah(String.valueOf(Math.max(selisihHarga, 0))));
             ongkir.setText(formatRupiah(String.valueOf(biayaKirim)));
-            discount.setText("-" + formatRupiah(String.valueOf(diskon)));
             totalHarga.setText(formatRupiah(String.valueOf(total)));
 
         } catch (NumberFormatException e) {
@@ -201,7 +179,7 @@ public class DetailTukarTambahActivity extends AppCompatActivity {
 
     private void setupButtons() {
         backIcon.setOnClickListener(v -> finish());
-
+        batal.setOnClickListener(v -> finish());
         lanjut.setOnClickListener(v -> kirimPengajuan());
     }
 
