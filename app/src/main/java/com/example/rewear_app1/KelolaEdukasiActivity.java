@@ -243,7 +243,7 @@ public class KelolaEdukasiActivity extends AppCompatActivity {
         ImageButton btnEdit = new ImageButton(this);
         btnEdit.setImageResource(R.drawable.pensiledit);
         btnEdit.setBackgroundResource(android.R.color.transparent);
-        btnEdit.setLayoutParams(new LinearLayout.LayoutParams(60, 60));
+        btnEdit.setLayoutParams(new LinearLayout.LayoutParams(75, 80));
         btnEdit.setOnClickListener(v -> showEditForm(id, tvJudul, tvDeskripsi, "artikel", artikelItem, null));
 
         ImageButton btnHapus = new ImageButton(this);

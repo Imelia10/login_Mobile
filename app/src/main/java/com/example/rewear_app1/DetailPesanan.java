@@ -175,11 +175,9 @@ public class DetailPesanan extends AppCompatActivity {
     }
 
     private double cekDanTerapkanDiskon(double hargaProduk) {
-        // Hitung berapa voucher yang pernah diklaim
         int totalVoucherDiklaim = dbHelperVoucher.getJumlahVoucherYangDiklaim(currentUserEmail);
         int transaksiDiskonSebelumnya = dbHelperTransaksi.getJumlahTransaksiDenganDiskon(currentUserEmail);
 
-        // Jika user tidak punya voucher tersisa, diskon = 0
         if (totalVoucherDiklaim <= transaksiDiskonSebelumnya) {
             return 0;
         }
@@ -188,20 +186,24 @@ public class DetailPesanan extends AppCompatActivity {
         double persen = 0;
         double maxDiskon = 0;
 
-        if (jumlahTransaksi >= 4) {
+        if (jumlahTransaksi >= 10) {
             persen = 0.15;
             maxDiskon = 35000;
-        } else if (jumlahTransaksi >= 3) {
+        } else if (jumlahTransaksi >= 6) {
             persen = 0.10;
             maxDiskon = 25000;
-        } else if (jumlahTransaksi >= 2) {
+        } else if (jumlahTransaksi >= 3) {
             persen = 0.07;
             maxDiskon = 15000;
+        } else if (jumlahTransaksi >= 2) {
+            persen = 0.05;
+            maxDiskon = 10000;
         }
 
         double potongan = hargaProduk * persen;
         return Math.min(potongan, maxDiskon);
     }
+
 
 
 
